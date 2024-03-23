@@ -2,8 +2,13 @@
 #include <gmp.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include<arpa/inet.h>
-#include<string.h>
+#include <arpa/inet.h>
+#include <string.h>
+#include <pthread.h>
+
+#define MAX_ID_LENGTH 32
+#define MAX_PASSWORD_LENGTH 32
+#define MAX_LINE_LENGTH 200
 
 mpz_t random_number;
 gmp_randstate_t state;//store the state and algo
@@ -20,7 +25,9 @@ void create_socket(){
 	memset(&addr,0,sizeof addr);
 	
 	addr.sin_family=AF_INET;
-	addr.sin_addr.s_addr=htonl(INADDR_ANY);
+	if (inet_pton(AF_INET, "127.0.0.5", &addr.sin_addr) != 1) {
+		perror("inet_pton");
+	}
 	addr.sin_port=htons(9898);
 	
 	if(bind(sfd,(struct sockaddr*)&addr,sizeof addr)==-1){
@@ -58,8 +65,56 @@ int initiate_generator(){
 	
 }
 
-void generate_send_nonce(int nsfd){
+void* serve_clients(void* args){
 
+	int bytes_read,bytes_sent;
+		
+	printf("server thread initiated\n");
+	int nsfd = *(int*)args;
+	
+	//rcv ids
+	char ids[2*MAX_ID_LENGTH + 3];
+	
+	bytes_read = recv(nsfd,ids,sizeof ids,0);
+	if(bytes_read == -1){
+		perror("rcv");
+	}else{
+		ids[bytes_read] = '\0';
+		printf("rcvd ids %s\n",ids);
+	}
+	
+	//seperate ids
+	
+	char* token;
+	char id1[MAX_ID_LENGTH + 1];
+    	char id2[MAX_ID_LENGTH +1];
+
+    	// Tokenize the string based on the delimiter "||"
+    	token = strtok(ids, "||");
+
+    	// Extract id1
+	if (token != NULL) {
+	       	strncpy(id1, token, MAX_ID_LENGTH);
+	       	id1[MAX_ID_LENGTH] = '\0'; 
+	} else {
+	       	printf("Error: Unable to extract id1\n");
+    	}
+
+    	// Get the next token (id2)
+    	token = strtok(NULL, "||");
+
+    	// Extract id2
+    	if (token != NULL) {
+        	strncpy(id2, token, MAX_ID_LENGTH);
+        	id2[MAX_ID_LENGTH] = '\0'; // Ensure null termination
+    	}else{
+    		printf("Error: Unable to extract id2\n");
+    	}
+
+    	printf("id1: %s\n", id1);
+    	printf("id2: %s\n", id2);
+	
+	//generating nonce
 	mpz_urandomb(random_number, state, 256);
     	gmp_printf("Nonce : %ZX\n", random_number);
     	
@@ -82,11 +137,52 @@ void generate_send_nonce(int nsfd){
     	}
     	printf("\n");
     	
-    	int sz = send(nsfd,nonce,count,0);
-    	if(sz != count){
+    	//sending nonce
+    	char password1[MAX_PASSWORD_LENGTH + 1];
+    	char password2[MAX_PASSWORD_LENGTH + 1];
+    	// Open the file
+	FILE* file = fopen("securedb.txt", "r");
+		if (file == NULL) {
+		perror("Error opening file");
+	}
+
+    	
+    	// Search for the IDs in the file
+    	int found = 0;
+    	char temp_id[MAX_ID_LENGTH +1];
+    	char temp_password[MAX_PASSWORD_LENGTH + 1];
+    	char line[MAX_LINE_LENGTH];
+    	
+    	while (fgets(line, sizeof(line), file) != NULL) {
+    		if(found == 2){
+    			break;
+    		}
+		if (sscanf(line, "%32s %32[^\n]", temp_id, temp_password) == 2) {
+	    		if (!strcmp(temp_id,id1)) {
+				strcpy(password1,temp_password);
+				
+				found++;
+	    		}else if (!strcmp(temp_id,id2)) {
+				strcpy(password2,temp_password);
+				found++;
+	    		}
+		}
+    	}
+	fclose(file);
+	
+	// ID not found
+	if(found != 2){
+		printf("Error in search operation : Id(s) not found\n");
+	}else{
+		printf("Password for ID %s: %s\n", id1, password1);
+		printf("Password for ID %s: %s\n", id2, password2);
+		printf("Fetched passwords successfully!\n");
+	}
+    
+    	bytes_sent = send(nsfd,nonce,count,0);
+    	if(bytes_sent != count){
     		perror("send ");
     	}
-    	
 }
 
 int main() {
@@ -95,16 +191,17 @@ int main() {
 	
 	initiate_generator();
 	
-    	int nsfd = accept(sfd,NULL,NULL);
-	if(nsfd == -1){
-		perror("accept ");
-	}else{
-		printf("accepted client\n");
-		generate_send_nonce(nsfd);
-	}
-    	    	
+	while(1){
+	    	int nsfd = accept(sfd,NULL,NULL);
+		if(nsfd == -1){
+			perror("accept ");
+		}else{
+			printf("accepted client\n");
+			pthread_t server;
+			pthread_create(&server,NULL,serve_clients,&nsfd);
+		}
+    	}
     	mpz_clear(random_number);
     	gmp_randclear(state);
     	
-    	while(1){}
 }
