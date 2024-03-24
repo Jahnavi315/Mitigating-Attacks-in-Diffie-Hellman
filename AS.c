@@ -9,6 +9,7 @@
 #define MAX_ID_LENGTH 32
 #define MAX_PASSWORD_LENGTH 32
 #define MAX_LINE_LENGTH 200
+#define NODE_PORT 9999
 
 mpz_t random_number;
 gmp_randstate_t state;//store the state and algo
@@ -73,7 +74,8 @@ void* serve_clients(void* args){
 	int nsfd = *(int*)args;
 	
 	//rcv ids
-	char ids[2*MAX_ID_LENGTH + 3];
+	char ids[2*MAX_ID_LENGTH + 20];
+	char ipaddr[16];
 	
 	bytes_read = recv(nsfd,ids,sizeof ids,0);
 	if(bytes_read == -1){
@@ -106,13 +108,25 @@ void* serve_clients(void* args){
     	// Extract id2
     	if (token != NULL) {
         	strncpy(id2, token, MAX_ID_LENGTH);
-        	id2[MAX_ID_LENGTH] = '\0'; // Ensure null termination
+        	id2[MAX_ID_LENGTH] = '\0'; 
     	}else{
     		printf("Error: Unable to extract id2\n");
+    	}
+    	
+    	// Get the next token (ipaddr of B)
+    	token = strtok(NULL, "||");
+
+    	// Extract ipaddr
+    	if (token != NULL) {
+        	strncpy(ipaddr, token, 16);
+        	ipaddr[15] = '\0'; 
+    	}else{
+    		printf("Error: Unable to extract ipaddr of node-B\n");
     	}
 
     	printf("id1: %s\n", id1);
     	printf("id2: %s\n", id2);
+    	printf("ipaddr : %s\n",ipaddr);
 	
 	//generating nonce
 	mpz_urandomb(random_number, state, 256);
@@ -125,6 +139,9 @@ void* serve_clients(void* args){
     		size++;
     	}
 	printf("Size reqd : %ld\n",size);
+	if(size < 32){
+		printf("TOO SMALL NONCE GENERATED\n");
+	}
     	unsigned char nonce[size];
 
 	size_t count;
@@ -174,15 +191,90 @@ void* serve_clients(void* args){
 	if(found != 2){
 		printf("Error in search operation : Id(s) not found\n");
 	}else{
+		//printing passwords
 		printf("Password for ID %s: %s\n", id1, password1);
+		printf("Password-1 content: ");
+	    	for (size_t i = 0; i < strlen(password1); i++) {
+			printf("%02X ", (unsigned char)password1[i]);
+	    	}
+	    	printf("\n");
 		printf("Password for ID %s: %s\n", id2, password2);
+		printf("Password-2 content: ");
+	    	for (size_t i = 0; i < strlen(password2); i++) {
+			printf("%02X ", (unsigned char)password2[i]);
+	    	}
+	    	printf("\n");
 		printf("Fetched passwords successfully!\n");
+		
+		//XOR passwords with nonce
+		
+		unsigned char nonce_xor_password1[32];
+		unsigned char nonce_xor_password2[32];
+		int p1_index = strlen(password1) - 1;
+		int p2_index = strlen(password2) - 1;
+		
+		for(int i=31;i>=0;i--){
+			if(p1_index != -1){
+				nonce_xor_password1[i] = nonce[i] ^ (unsigned char)(password1[p1_index--]);
+			}else{
+				nonce_xor_password1[i] = nonce[i];
+			}
+		}
+		
+		//printing xored nonce
+		printf("Password-1 XOR nonce content: ");
+	    	for (size_t i = 0; i < 32; i++) {
+			printf("%02X ", (unsigned char)nonce_xor_password1[i]);
+	    	}
+	    	printf("\n");
+	    	
+		for(int i=31;i>=0;i--){
+			if(p2_index != -1){
+				nonce_xor_password2[i] = nonce[i] ^ (unsigned char)(password2[p2_index--]);
+			}else{
+				nonce_xor_password2[i] = nonce[i];
+			}
+		}
+		
+		//printing xored nonce
+		printf("Password-2 XOR nonce content: ");
+	    	for (size_t i = 0; i < 32; i++) {
+			printf("%02X ", (unsigned char)nonce_xor_password2[i]);
+	    	}
+	    	printf("\n");
+	    	
+	    	//sending nonce XOR password1 to node-1(A)
+	    	bytes_sent = send(nsfd,nonce_xor_password1,count,0);
+	    	if(bytes_sent != count){
+	    		perror("send ");
+	    	}
+	    	
+	    	//sending nonce XOR password2 to node-2(B)
+	    	
+	    	//send connect request to node - B
+	    	int bsfd = socket(AF_INET,SOCK_STREAM,0);
+	    	
+	    	struct sockaddr_in b_addr;
+	
+		memset(&b_addr,0,sizeof b_addr);	
+		b_addr.sin_family=AF_INET;
+		if (inet_pton(AF_INET, ipaddr, &b_addr.sin_addr) != 1) {
+			perror("inet_pton");
+		}
+		b_addr.sin_port=htons(NODE_PORT);
+		
+		int st = connect(bsfd,(struct sockaddr*)&b_addr,sizeof b_addr);
+		if(st<0){
+			perror("connect ");
+		}else{
+			printf("Connection to node - B successful\n");
+			bytes_sent = send(bsfd,nonce_xor_password2,count,0);
+		    	if(bytes_sent != count){
+		    		perror("send ");
+		    	}
+		}
+	    	
 	}
-    
-    	bytes_sent = send(nsfd,nonce,count,0);
-    	if(bytes_sent != count){
-    		perror("send ");
-    	}
 }
 
 int main() {

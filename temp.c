@@ -1,47 +1,40 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
+#include <openssl/sha.h>
 
-#define MAX_LINE_LENGTH 100
-#define MAX_ID_LENGTH 20
-#define MAX_PASSWORD_LENGTH 50
+#define HASH_LENGTH 32 // SHA-256 produces a 32-byte hash
+
+// Function to compute SHA-256 hash
+void computeSHA256(const unsigned char input[], size_t input_len, unsigned char output[]) {
+    SHA256_CTX ctx;
+    SHA256_Init(&ctx);
+    SHA256_Update(&ctx, input, input_len);
+    SHA256_Final(output, &ctx);
+}
+
+// Function to print hash value
+void printHash(const unsigned char hash[], size_t hash_len) {
+    for (size_t i = 0; i < hash_len; i++) {
+        printf("%02x", hash[i]);
+    }
+    printf("\n");
+}
 
 int main() {
-    FILE *file;
-    char line[MAX_LINE_LENGTH];
-    char id[MAX_ID_LENGTH];
-    char password[MAX_PASSWORD_LENGTH];
-    int search_id;
+    // Input array
+    unsigned char input[] = "Hello, world!";
+    size_t input_len = strlen((const char*)input);
 
-    // Open the file
-    file = fopen("securedb.txt", "r");
-    if (file == NULL) {
-        perror("Error opening file");
-        return 1;
-    }
+    // Output array to store hash
+    unsigned char hash[HASH_LENGTH];
 
-    // Get the ID to search for
-    printf("Enter ID: ");
-    if (scanf("%d", &search_id) != 1) {
-        printf("Invalid input\n");
-        fclose(file);
-        return 1;
-    }
+    // Compute SHA-256 hash
+    computeSHA256(input, input_len, hash);
 
-    // Search for the ID in the file
-    while (fgets(line, sizeof(line), file) != NULL) {
-        if (sscanf(line, "%9s %[^\n]", id, password) == 2) {
-            if (atoi(id) == search_id) {
-                printf("Password for ID %d: %s\n", search_id, password);
-                fclose(file);
-                return 0;
-            }
-        }
-    }
+    // Print hash value
+    printf("SHA-256 hash: ");
+    printHash(hash, HASH_LENGTH);
 
-    // ID not found
-    printf("ID %d not found\n", search_id);
-    fclose(file);
     return 0;
 }
 
