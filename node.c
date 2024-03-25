@@ -10,68 +10,79 @@
 #include <sys/time.h>
 #include <sys/wait.h>
 #include <gmp.h>
+#include <openssl/sha.h>
 
 #define MAX_ID_LENGTH 32
 #define MAX_PASSWORD_LENGTH 32
 #define NODE_PORT 9999
+#define NONCE_LENGTH 32
+#define HASH_LENGTH 32
 
 char ipaddr[16];
-char my_id[MAX_ID_LENGTH + 1];
+char my_id[MAX_ID_LENGTH + 1];//IDs are in char type and also store \0 at the end , these will be converted into unsigned char type when required in the code
 int port;
 
-void extract_nonce(int sfd,unsigned char nonce[]){
+// Function to compute SHA-256 hash
+void computeSHA256(const unsigned char input[], size_t input_len, unsigned char output[]) {
+	SHA256_CTX ctx;
+	SHA256_Init(&ctx);
+	SHA256_Update(&ctx, input, input_len);
+	SHA256_Final(output, &ctx);
+}
+
+// Function to print hash value
+void printHash(const unsigned char hash[], size_t hash_len) {
+	printf("Hash Value : ");
+    	for (size_t i = 0; i < hash_len; i++) {
+        	printf("%02x", hash[i]);
+    	}
+    	printf("\n");
+}
+
+void extract_nonce(unsigned char xored_nonce[],unsigned char nonce[]){
 	int bytes_read,bytes_sent;
 	
-	//rcv xored_nonce
-	unsigned char xored_nonce[32];
-	bytes_read = recv(sfd,xored_nonce,sizeof xored_nonce,0);
-	if(bytes_read != 32){
-		//when xored_nonce is not of 32 bytes!!
-		printf("Did not receive 32 bytes!\n");
-		return;
-	}else{
-		printf("Xored-Nonce content: ");
-	    	for (size_t i = 0; i < bytes_read; i++) {
-			printf("%02X ", xored_nonce[i]);
-	    	}
-	    	printf("\n");
-	    	
-	    	//extracting nonce
-	    	printf("Enter your password to continue : ");
-	    	fflush(stdout);
-	    	
-	    	char password[MAX_PASSWORD_LENGTH + 1];
-	    	bytes_read = read(0,password,sizeof password);
-	    	if(bytes_read == -1){
-	    		perror("read");
-	    		return;
-	    	}
-	    	password[bytes_read - 1] = '\0';
-	    	printf("Password content: ");
-	    	for (size_t i = 0; i < strlen(password); i++) {
-			printf("%02X ", (unsigned char)password[i]);
-	    	}
-	    	printf("\n");
-	    	fflush(stdout);
-	    	
-	    	int p_index = strlen(password) - 1;
-	    	
-	    	for(int i=31;i>=0;i--){
-			if(p_index != -1){
-				nonce[i] = xored_nonce[i] ^ (unsigned char)(password[p_index--]);
-			}else{
-				nonce[i] = xored_nonce[i];
-			}
-		}
-		
-		//printing nonce extracted
-		printf("Nonce content: ");
-	    	for (size_t i = 0; i < 32; i++) {
-			printf("%02X ", nonce[i]);
-	    	}
-	    	printf("\n");
-	    	
+	printf("Xored-Nonce content: ");
+	for (size_t i = 0; i < NONCE_LENGTH; i++) {
+		printf("%02X ", xored_nonce[i]);
 	}
+	printf("\n");
+	    	
+    	//extracting nonce
+    	printf("Enter your password to continue : ");
+    	fflush(stdout);
+    	
+    	char password[MAX_PASSWORD_LENGTH + 1];
+    	bytes_read = read(0,password,sizeof password);
+    	if(bytes_read == -1){
+    		perror("read");
+    		return;
+    	}
+    	password[bytes_read - 1] = '\0';
+    	printf("Password content: ");
+    	for (size_t i = 0; i < strlen(password); i++) {
+		printf("%02X ", (unsigned char)password[i]);
+    	}
+    	printf("\n");
+    	fflush(stdout);
+    	
+    	int p_index = strlen(password) - 1;
+    	
+    	for(int i=31;i>=0;i--){
+		if(p_index != -1){
+			nonce[i] = xored_nonce[i] ^ (unsigned char)(password[p_index--]);
+		}else{
+			nonce[i] = xored_nonce[i];
+		}
+	}
+	
+	//printing nonce extracted
+	printf("Nonce content: ");
+    	for (size_t i = 0; i < NONCE_LENGTH; i++) {
+		printf("%02X ", nonce[i]);
+    	}
+    	printf("\n");
+    	
 }
 
 void* node_as_A(void* args){
@@ -79,6 +90,7 @@ void* node_as_A(void* args){
 
 	//IDs input
 	char req_id[MAX_ID_LENGTH + 1];
+	//IDs are in char type and also store \0 at the end , these will be converted into unsigned char type when required in the code
 	char req_ipaddr[16];
 	
 	printf("Enter Y if you want to start key exchange !\n");
@@ -131,9 +143,18 @@ void* node_as_A(void* args){
 			printf("Sent ids to the server\n");
 		}
 		
-		unsigned char nonce[32];
+		unsigned char nonce[NONCE_LENGTH];		
+		unsigned char xored_nonce[NONCE_LENGTH];
+		
 		printf("Extracting nonce..\n");
-		extract_nonce(sfd,nonce);
+		//rcv xored_nonce
+		bytes_read = recv(sfd,xored_nonce,sizeof xored_nonce,0);
+		if(bytes_read != NONCE_LENGTH){
+			//when xored_nonce is not of 32 bytes!!
+			printf("Did not receive 32 bytes!\n");
+			return NULL;
+		}
+		extract_nonce(xored_nonce,nonce);
 	}
 }
 
@@ -167,9 +188,30 @@ void* node_as_B(void* args){
 	if(nsfd != -1){
 		printf("Server established connection!\n");
 		
-		unsigned char nonce[32];
+		unsigned char buff[NONCE_LENGTH + 2 + HASH_LENGTH];
+		unsigned char xored_nonce[NONCE_LENGTH];
+		unsigned char nonce[NONCE_LENGTH];
+		unsigned char hashed_value_ob[HASH_LENGTH];
+		
 		printf("Extracting nonce..\n");
-		extract_nonce(nsfd,nonce);
+		//rcv xored_nonce
+		bytes_read = recv(nsfd,buff,sizeof buff,0);
+		if(bytes_read == -1){
+			perror("recv");
+			return NULL;
+		}
+		
+		for(int i=0;i<NONCE_LENGTH;i++){
+			xored_nonce[i] = buff[i];
+		}
+		extract_nonce(xored_nonce,nonce);
+		
+		for(int i=0;i<HASH_LENGTH;i++){
+			hashed_value_ob[i] = buff[NONCE_LENGTH + 2 + i];
+		}
+		
+		printf("Obtained ");
+		printHash(hashed_value_ob,sizeof hashed_value_ob);
 	}
 }
 

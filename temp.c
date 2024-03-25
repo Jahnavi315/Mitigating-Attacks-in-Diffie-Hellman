@@ -1,39 +1,50 @@
 #include <stdio.h>
-#include <string.h>
-#include <openssl/sha.h>
+#include <gmp.h>
 
-#define HASH_LENGTH 32 // SHA-256 produces a 32-byte hash
+void find_primitive_root(mpz_t p) {
+    mpz_t q, a, p_minus_one, power;
+    mpz_inits(q, a, p_minus_one, power, NULL);
 
-// Function to compute SHA-256 hash
-void computeSHA256(const unsigned char input[], size_t input_len, unsigned char output[]) {
-    SHA256_CTX ctx;
-    SHA256_Init(&ctx);
-    SHA256_Update(&ctx, input, input_len);
-    SHA256_Final(output, &ctx);
-}
+    mpz_sub_ui(p_minus_one, p, 1); // p_minus_one = p - 1
+    mpz_set(q, p_minus_one); // q = p - 1
 
-// Function to print hash value
-void printHash(const unsigned char hash[], size_t hash_len) {
-    for (size_t i = 0; i < hash_len; i++) {
-        printf("%02x", hash[i]);
+    // Try different values of 'a' until we find a primitive root
+    mpz_set_ui(a, 2); // Start with a = 2
+    while (1) {
+        mpz_powm(power, a, q, p); // power = a^q mod p
+
+        // If a^q ≢ 1 (mod p), then 'a' is a primitive root
+        if (mpz_cmp_ui(power, 1) != 0) {
+            gmp_printf("Primitive Root (q) = %Zd\n", a);
+            break;
+        }
+	
+	gmp_printf("Checked %Zd\n", a);
+	
+        mpz_add_ui(a, a, 1); // Increment 'a'
+        
     }
-    printf("\n");
+
+    mpz_clears(q, a, p_minus_one, power, NULL);
 }
 
 int main() {
-    // Input array
-    unsigned char input[] = "Hello, world!";
-    size_t input_len = strlen((const char*)input);
+    mpz_t prime;
+    gmp_randstate_t state;
+    gmp_randinit_default(state);
 
-    // Output array to store hash
-    unsigned char hash[HASH_LENGTH];
+    // Generate a 2048-bit prime number
+    mpz_init(prime);
+    mpz_urandomb(prime, state, 8);
+    mpz_nextprime(prime, prime);
 
-    // Compute SHA-256 hash
-    computeSHA256(input, input_len, hash);
+    gmp_printf("Generated Prime (p) = %Zd\n", prime);
 
-    // Print hash value
-    printf("SHA-256 hash: ");
-    printHash(hash, HASH_LENGTH);
+    // Find the primitive root
+    find_primitive_root(prime);
+
+    mpz_clear(prime);
+    gmp_randclear(state);
 
     return 0;
 }

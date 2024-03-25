@@ -5,11 +5,14 @@
 #include <arpa/inet.h>
 #include <string.h>
 #include <pthread.h>
+#include <openssl/sha.h>
 
 #define MAX_ID_LENGTH 32
 #define MAX_PASSWORD_LENGTH 32
 #define MAX_LINE_LENGTH 200
 #define NODE_PORT 9999
+#define HASH_LENGTH 32
+#define NONCE_LENGTH 32
 
 mpz_t random_number;
 gmp_randstate_t state;//store the state and algo
@@ -66,6 +69,23 @@ int initiate_generator(){
 	
 }
 
+// Function to compute SHA-256 hash
+void computeSHA256(const unsigned char input[], size_t input_len, unsigned char output[]) {
+	SHA256_CTX ctx;
+	SHA256_Init(&ctx);
+	SHA256_Update(&ctx, input, input_len);
+	SHA256_Final(output, &ctx);
+}
+
+// Function to print hash value
+void printHash(const unsigned char hash[], size_t hash_len) {
+	printf("Hash Value : ");
+    	for (size_t i = 0; i < hash_len; i++) {
+        	printf("%02x", hash[i]);
+    	}
+    	printf("\n");
+}
+
 void* serve_clients(void* args){
 
 	int bytes_read,bytes_sent;
@@ -88,6 +108,7 @@ void* serve_clients(void* args){
 	//seperate ids
 	
 	char* token;
+	//IDs are in char type and also store \0 at the end , these will be converted into unsigned char type when required in the code
 	char id1[MAX_ID_LENGTH + 1];
     	char id2[MAX_ID_LENGTH +1];
 
@@ -139,22 +160,23 @@ void* serve_clients(void* args){
     		size++;
     	}
 	printf("Size reqd : %ld\n",size);
-	if(size < 32){
+	if(size < NONCE_LENGTH){
 		printf("TOO SMALL NONCE GENERATED\n");
 	}
-    	unsigned char nonce[size];
+    	unsigned char nonce[NONCE_LENGTH];
 
 	size_t count;
     	mpz_export(nonce, &count, 1, sizeof(unsigned char), 1, 0, random_number);
 	
 	printf("Count : %ld\n",count);
     	printf("Nonce content: ");
-    	for (size_t i = 0; i < size; i++) {
+    	for (size_t i = 0; i < NONCE_LENGTH; i++) {
         	printf("%02X ", nonce[i]);
     	}
     	printf("\n");
     	
     	//sending nonce
+    	//passwords are in char type and also store \0 at the end , these will be converted into unsigned char type when required in the code
     	char password1[MAX_PASSWORD_LENGTH + 1];
     	char password2[MAX_PASSWORD_LENGTH + 1];
     	// Open the file
@@ -208,12 +230,12 @@ void* serve_clients(void* args){
 		
 		//XOR passwords with nonce
 		
-		unsigned char nonce_xor_password1[32];
-		unsigned char nonce_xor_password2[32];
+		unsigned char nonce_xor_password1[NONCE_LENGTH];
+		unsigned char nonce_xor_password2[NONCE_LENGTH];
 		int p1_index = strlen(password1) - 1;
 		int p2_index = strlen(password2) - 1;
 		
-		for(int i=31;i>=0;i--){
+		for(int i=NONCE_LENGTH - 1;i>=0;i--){
 			if(p1_index != -1){
 				nonce_xor_password1[i] = nonce[i] ^ (unsigned char)(password1[p1_index--]);
 			}else{
@@ -223,7 +245,7 @@ void* serve_clients(void* args){
 		
 		//printing xored nonce
 		printf("Password-1 XOR nonce content: ");
-	    	for (size_t i = 0; i < 32; i++) {
+	    	for (size_t i = 0; i < NONCE_LENGTH; i++) {
 			printf("%02X ", (unsigned char)nonce_xor_password1[i]);
 	    	}
 	    	printf("\n");
@@ -238,7 +260,7 @@ void* serve_clients(void* args){
 		
 		//printing xored nonce
 		printf("Password-2 XOR nonce content: ");
-	    	for (size_t i = 0; i < 32; i++) {
+	    	for (size_t i = 0; i < NONCE_LENGTH; i++) {
 			printf("%02X ", (unsigned char)nonce_xor_password2[i]);
 	    	}
 	    	printf("\n");
@@ -249,7 +271,7 @@ void* serve_clients(void* args){
 	    		perror("send ");
 	    	}
 	    	
-	    	//sending nonce XOR password2 to node-2(B)
+	    	//sending nonce XOR password2 and hash to node-2(B)
 	    	
 	    	//send connect request to node - B
 	    	int bsfd = socket(AF_INET,SOCK_STREAM,0);
@@ -268,8 +290,36 @@ void* serve_clients(void* args){
 			perror("connect ");
 		}else{
 			printf("Connection to node - B successful\n");
-			bytes_sent = send(bsfd,nonce_xor_password2,count,0);
-		    	if(bytes_sent != count){
+			
+			unsigned char concatenated_xored_nonce_id[NONCE_LENGTH+2+MAX_ID_LENGTH];
+			unsigned char final_buff[NONCE_LENGTH + 2 + HASH_LENGTH];
+			
+			for(int i=0;i<NONCE_LENGTH;i++){
+				concatenated_xored_nonce_id[i] = final_buff[i] = nonce_xor_password2[i];
+			}
+			
+			concatenated_xored_nonce_id[NONCE_LENGTH] = concatenated_xored_nonce_id[NONCE_LENGTH + 1] = '|';
+			final_buff[NONCE_LENGTH] = final_buff[NONCE_LENGTH + 1] = '|';
+			
+			for(int i=0;i<strlen(id1);i++){
+				concatenated_xored_nonce_id[NONCE_LENGTH + 2 + i] = (unsigned char)id1[i];
+			}
+			printf("concatenated_xored_nonce_id content: ");
+		    	for (size_t i = 0; i < NONCE_LENGTH+2+MAX_ID_LENGTH ; i++) {
+				printf("%02X ",concatenated_xored_nonce_id[i]);
+		    	}
+		    	printf("\n");
+		    	
+		    	unsigned char hashed_value[HASH_LENGTH];
+		    	computeSHA256(concatenated_xored_nonce_id,sizeof concatenated_xored_nonce_id,hashed_value);
+		    	printHash(hashed_value,sizeof hashed_value);
+			
+			for(int i=0;i<HASH_LENGTH;i++){
+				final_buff[NONCE_LENGTH + 2 + i] = hashed_value[i];
+			}
+			
+			bytes_sent = send(bsfd,final_buff,sizeof final_buff,0);
+		    	if(bytes_sent != sizeof final_buff){
 		    		perror("send ");
 		    	}
 		}
