@@ -1,31 +1,57 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <gmp.h>
 
 void find_primitive_root(mpz_t p) {
-    mpz_t q, a, p_minus_one, power;
-    mpz_inits(q, a, p_minus_one, power, NULL);
+    mpz_t q, a, i,rem, all_ones;
+    mpz_inits(q, a,i, rem, all_ones, NULL);
 
-    mpz_sub_ui(p_minus_one, p, 1); // p_minus_one = p - 1
-    mpz_set(q, p_minus_one); // q = p - 1
+    mpz_sub_ui(q, p, 1); // q = p - 1
 
-    // Try different values of 'a' until we find a primitive root
+    // Calculate the value with all bits set to 1
+
     mpz_set_ui(a, 2); // Start with a = 2
-    while (1) {
-        mpz_powm(power, a, q, p); // power = a^q mod p
 
-        // If a^q ≢ 1 (mod p), then 'a' is a primitive root
-        if (mpz_cmp_ui(power, 1) != 0) {
-            gmp_printf("Primitive Root (q) = %Zd\n", a);
-            break;
-        }
-	
-	gmp_printf("Checked %Zd\n", a);
-	
-        mpz_add_ui(a, a, 1); // Increment 'a'
+    while (mpz_cmp(a, q) <= 0) { // While a <= p-1
+        int is_PR = 1; // Initialize is_PR to 1
         
+        
+	mpz_set_ui(all_ones, 2);
+	mpz_pow_ui(all_ones, all_ones, mpz_get_ui(p)); // all_ones = 2^(p)
+
+	mpz_sub_ui(all_ones, all_ones, 1); // all_ones = 2^(p) - 1
+	//gmp_printf("all ones at start of a %Zd : %ZX\n", a, all_ones);
+    
+    /*
+        // Loop from i to p-1
+        mpz_set_ui(i, 1);	
+        while( mpz_cmp(i, q) <= 0)  {
+        //printf("started loop\n");
+        mpz_init2(rem, 2 * mpz_sizeinbase(p, 2)); 	
+	    mpz_powm(rem, a, i, p); // power = a^i mod p
+	    // Check if the i-th bit is set in all_ones
+	    if (mpz_tstbit(all_ones,mpz_get_ui(rem)) == 1) {
+	    	mpz_clrbit (all_ones,mpz_get_ui(rem));
+	    	//gmp_printf("bit was set!,all ones now: %ZX and rem %Zd\n",all_ones,rem);
+	    }else{
+	   	//gmp_printf("all ones now: %ZX , rem %Zd\n",all_ones,rem);
+	   	is_PR = 0;
+	   	break; 	
+	    }
+	    //gmp_printf("%ZX %Zd rem = %Zd\n",all_ones,i, rem);
+	    mpz_add_ui(i, i, 1);
+	    //printf("loop");
+	}*/
+
+        if (is_PR) {
+            gmp_printf("Primitive root (q) = %Zd\n", a);
+            //break; // Exit the loop since primitive root found
+        }
+
+        mpz_add_ui(a, a, 1); // Increment 'a'
     }
 
-    mpz_clears(q, a, p_minus_one, power, NULL);
+    mpz_clears(q, a, rem, all_ones, NULL);
 }
 
 int main() {
@@ -35,9 +61,8 @@ int main() {
 
     // Generate a 2048-bit prime number
     mpz_init(prime);
-    mpz_urandomb(prime, state, 8);
+    mpz_urandomb(prime, state, 64);
     mpz_nextprime(prime, prime);
-
     gmp_printf("Generated Prime (p) = %Zd\n", prime);
 
     // Find the primitive root

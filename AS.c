@@ -71,6 +71,7 @@ int initiate_generator(){
 
 // Function to compute SHA-256 hash
 void computeSHA256(const unsigned char input[], size_t input_len, unsigned char output[]) {
+
 	SHA256_CTX ctx;
 	SHA256_Init(&ctx);
 	SHA256_Update(&ctx, input, input_len);
@@ -79,6 +80,7 @@ void computeSHA256(const unsigned char input[], size_t input_len, unsigned char 
 
 // Function to print hash value
 void printHash(const unsigned char hash[], size_t hash_len) {
+
 	printf("Hash Value : ");
     	for (size_t i = 0; i < hash_len; i++) {
         	printf("%02x", hash[i]);
@@ -345,5 +347,4 @@ int main() {
     	}
     	mpz_clear(random_number);
     	gmp_randclear(state);
-    	
 }
