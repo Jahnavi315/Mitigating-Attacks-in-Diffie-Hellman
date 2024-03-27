@@ -10,13 +10,20 @@
 #define MAX_ID_LENGTH 32
 #define MAX_PASSWORD_LENGTH 32
 #define MAX_LINE_LENGTH 200
-#define NODE_PORT 9999
+#define NODE_B_PORT 9999
 #define HASH_LENGTH 32
 #define NONCE_LENGTH 32
 
 mpz_t random_number;
 gmp_randstate_t state;//store the state and algo
 int sfd;
+
+void print(unsigned char buff[],int len){
+	for(int i=0;i<len;i++){
+		printf("%02X ",buff[i]);
+	}
+	printf("\n");
+}
 
 void create_socket(){
 
@@ -79,10 +86,10 @@ void computeSHA256(const unsigned char input[], size_t input_len, unsigned char 
 }
 
 // Function to print hash value
-void printHash(const unsigned char hash[], size_t hash_len) {
+void printHash(const unsigned char hash[]) {
 
-	printf("Hash Value : ");
-    	for (size_t i = 0; i < hash_len; i++) {
+	printf("hash Value : ");
+    	for (size_t i = 0; i < HASH_LENGTH; i++) {
         	printf("%02x", hash[i]);
     	}
     	printf("\n");
@@ -171,11 +178,8 @@ void* serve_clients(void* args){
     	mpz_export(nonce, &count, 1, sizeof(unsigned char), 1, 0, random_number);
 	
 	printf("Count : %ld\n",count);
-    	printf("Nonce content: ");
-    	for (size_t i = 0; i < NONCE_LENGTH; i++) {
-        	printf("%02X ", nonce[i]);
-    	}
-    	printf("\n");
+    	printf("Nonce : ");
+    	print(nonce,NONCE_LENGTH);
     	
     	//sending nonce
     	//passwords are in char type and also store \0 at the end , these will be converted into unsigned char type when required in the code
@@ -217,17 +221,12 @@ void* serve_clients(void* args){
 	}else{
 		//printing passwords
 		printf("Password for ID %s: %s\n", id1, password1);
-		printf("Password-1 content: ");
-	    	for (size_t i = 0; i < strlen(password1); i++) {
-			printf("%02X ", (unsigned char)password1[i]);
-	    	}
-	    	printf("\n");
+		printf("Password-A : ");
+	    	print((unsigned char*)password1,strlen(password1));
+	    	
 		printf("Password for ID %s: %s\n", id2, password2);
-		printf("Password-2 content: ");
-	    	for (size_t i = 0; i < strlen(password2); i++) {
-			printf("%02X ", (unsigned char)password2[i]);
-	    	}
-	    	printf("\n");
+		printf("Password-B : ");
+	    	print((unsigned char*)password2,strlen(password2));
 		printf("Fetched passwords successfully!\n");
 		
 		//XOR passwords with nonce
@@ -246,11 +245,8 @@ void* serve_clients(void* args){
 		}
 		
 		//printing xored nonce
-		printf("Password-1 XOR nonce content: ");
-	    	for (size_t i = 0; i < NONCE_LENGTH; i++) {
-			printf("%02X ", (unsigned char)nonce_xor_password1[i]);
-	    	}
-	    	printf("\n");
+		printf("Nonce XOR PA : ");
+	    	print(nonce_xor_password1,NONCE_LENGTH);
 	    	
 		for(int i=31;i>=0;i--){
 			if(p2_index != -1){
@@ -261,11 +257,8 @@ void* serve_clients(void* args){
 		}
 		
 		//printing xored nonce
-		printf("Password-2 XOR nonce content: ");
-	    	for (size_t i = 0; i < NONCE_LENGTH; i++) {
-			printf("%02X ", (unsigned char)nonce_xor_password2[i]);
-	    	}
-	    	printf("\n");
+		printf("Nonce XOR PB : ");
+		print(nonce_xor_password2,NONCE_LENGTH);
 	    	
 	    	//sending nonce XOR password1 to node-1(A)
 	    	bytes_sent = send(nsfd,nonce_xor_password1,count,0);
@@ -285,7 +278,7 @@ void* serve_clients(void* args){
 		if (inet_pton(AF_INET, ipaddr, &b_addr.sin_addr) != 1) {
 			perror("inet_pton");
 		}
-		b_addr.sin_port=htons(NODE_PORT);
+		b_addr.sin_port=htons(NODE_B_PORT);
 		
 		int st = connect(bsfd,(struct sockaddr*)&b_addr,sizeof b_addr);
 		if(st<0){
@@ -293,35 +286,35 @@ void* serve_clients(void* args){
 		}else{
 			printf("Connection to node - B successful\n");
 			
-			unsigned char concatenated_xored_nonce_id[NONCE_LENGTH+2+MAX_ID_LENGTH];
-			unsigned char final_buff[NONCE_LENGTH + 2 + HASH_LENGTH];
+			unsigned char nonce_xor_p2__id[NONCE_LENGTH + 2 + MAX_ID_LENGTH];
+			unsigned char hash_nonce_xor_p2__id[HASH_LENGTH];
+			unsigned char nonce_xor_p2__hash_nonce_xor_p2__id[NONCE_LENGTH + 2 + HASH_LENGTH];
 			
 			for(int i=0;i<NONCE_LENGTH;i++){
-				concatenated_xored_nonce_id[i] = final_buff[i] = nonce_xor_password2[i];
+				nonce_xor_p2__id[i] = nonce_xor_p2__hash_nonce_xor_p2__id[i] = nonce_xor_password2[i];
 			}
 			
-			concatenated_xored_nonce_id[NONCE_LENGTH] = concatenated_xored_nonce_id[NONCE_LENGTH + 1] = '|';
-			final_buff[NONCE_LENGTH] = final_buff[NONCE_LENGTH + 1] = '|';
+			nonce_xor_p2__id[NONCE_LENGTH] = nonce_xor_p2__id[NONCE_LENGTH + 1] = '|';
+			nonce_xor_p2__hash_nonce_xor_p2__id[NONCE_LENGTH] = nonce_xor_p2__hash_nonce_xor_p2__id[NONCE_LENGTH + 1] = '|';
 			
 			for(int i=0;i<strlen(id1);i++){
-				concatenated_xored_nonce_id[NONCE_LENGTH + 2 + i] = (unsigned char)id1[i];
+				nonce_xor_p2__id[NONCE_LENGTH + 2 + i] = (unsigned char)id1[i];
 			}
-			printf("concatenated_xored_nonce_id content: ");
-		    	for (size_t i = 0; i < NONCE_LENGTH+2+MAX_ID_LENGTH ; i++) {
-				printf("%02X ",concatenated_xored_nonce_id[i]);
-		    	}
-		    	printf("\n");
+			
+			printf("(nonce XOR PB)||IDA : ");
+		    	print(nonce_xor_p2__id,sizeof nonce_xor_p2__id);
 		    	
-		    	unsigned char hashed_value[HASH_LENGTH];
-		    	computeSHA256(concatenated_xored_nonce_id,sizeof concatenated_xored_nonce_id,hashed_value);
-		    	printHash(hashed_value,sizeof hashed_value);
+		    	
+		    	computeSHA256(nonce_xor_p2__id,sizeof nonce_xor_p2__id,hash_nonce_xor_p2__id);
+		    	printf("(nonce XOR PB)||IDA ");
+		    	printHash(hash_nonce_xor_p2__id);
 			
 			for(int i=0;i<HASH_LENGTH;i++){
-				final_buff[NONCE_LENGTH + 2 + i] = hashed_value[i];
+				nonce_xor_p2__hash_nonce_xor_p2__id[NONCE_LENGTH + 2 + i] = hash_nonce_xor_p2__id[i];
 			}
 			
-			bytes_sent = send(bsfd,final_buff,sizeof final_buff,0);
-		    	if(bytes_sent != sizeof final_buff){
+			bytes_sent = send(bsfd,nonce_xor_p2__hash_nonce_xor_p2__id,sizeof nonce_xor_p2__hash_nonce_xor_p2__id,0);
+		    	if(bytes_sent != sizeof nonce_xor_p2__hash_nonce_xor_p2__id){
 		    		perror("send ");
 		    	}
 		}
