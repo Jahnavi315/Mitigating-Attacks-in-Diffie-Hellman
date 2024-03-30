@@ -56,7 +56,11 @@ int checkIfHashMatch(unsigned char h1[],unsigned char h2[]){
 	return 1;
 }
 
-
+void copyTo(unsigned char* dest,unsigned char* source,int bytes){
+	for(int i=0;i<bytes;i++){
+		dest[i] = source[i];
+	}
+}
 
 void extract_nonce(unsigned char nonce_xor_password[],unsigned char nonce[]){
 	int bytes_read,bytes_sent;
@@ -166,48 +170,38 @@ void* node_as_A(void* args){
 		
 		//Start Key exchange process
 		
+		//A sends YA||H(YA||N1)||IDA to B
 		unsigned char Ya[MAX_PU_KEY_LENGTH];
 		unsigned char Ya__nonce[MAX_PU_KEY_LENGTH + 2 + NONCE_LENGTH];
 		unsigned char hash_Ya__nonce[HASH_LENGTH];
 		//buffer to be sent to node B
-		unsigned char Ya__hash_Ya__nonce__ida[MAX_PU_KEY_LENGTH + 2 + HASH_LENGTH + MAX_ID_LENGTH];
+		unsigned char Ya__hash_Ya__nonce__ida[MAX_PU_KEY_LENGTH + 2 + HASH_LENGTH + 2 + MAX_ID_LENGTH];
 		
 		//computing YA to be done later
 		
-		
-		
-		for(int i=0;i<MAX_PU_KEY_LENGTH;i++){
-			Ya__nonce[i] = Ya[i];
-			Ya__hash_Ya__nonce__ida[i] = Ya[i];
-		}
-		
+		//fill Ya||Nonce
+		copyTo(Ya__nonce,Ya,MAX_PU_KEY_LENGTH);
 		Ya__nonce[MAX_PU_KEY_LENGTH] = Ya__nonce[MAX_PU_KEY_LENGTH + 1] = '|';
-		Ya__hash_Ya__nonce__ida[MAX_PU_KEY_LENGTH] = Ya__hash_Ya__nonce__ida[MAX_PU_KEY_LENGTH + 1] = '|';
+		copyTo(Ya__nonce + MAX_PU_KEY_LENGTH + 2,nonce,NONCE_LENGTH);
 		
-		for(int i=0;i<NONCE_LENGTH;i++){
-			Ya__nonce[MAX_PU_KEY_LENGTH + 2 + i] = nonce[i];
-		}
-		
-		//printing Ya__nonce content
+		//printing Ya||Nonce content
 		printf("YA||Nonce : ");
 		print(Ya__nonce,sizeof Ya__nonce);
 		
+		//find H(YA||Nonce)
 		computeSHA256(Ya__nonce,sizeof Ya__nonce,hash_Ya__nonce);
 		printf("YA||Nonce ");
 		printHash(hash_Ya__nonce);
 		
-		for(int i=0;i<HASH_LENGTH;i++){
-			Ya__hash_Ya__nonce__ida[MAX_PU_KEY_LENGTH + 2 + i] = hash_Ya__nonce[i];
-		}
-		
+		//fill YA||H(Ya||NOnce)||IDA
+		copyTo(Ya__hash_Ya__nonce__ida,Ya,MAX_PU_KEY_LENGTH);
+		Ya__hash_Ya__nonce__ida[MAX_PU_KEY_LENGTH] = Ya__hash_Ya__nonce__ida[MAX_PU_KEY_LENGTH + 1] = '|';
+		copyTo(Ya__hash_Ya__nonce__ida + MAX_PU_KEY_LENGTH + 2,hash_Ya__nonce,HASH_LENGTH);
 		Ya__hash_Ya__nonce__ida[MAX_PU_KEY_LENGTH + 2 + HASH_LENGTH] = Ya__hash_Ya__nonce__ida[MAX_PU_KEY_LENGTH + 2 + HASH_LENGTH + 1] = '|';
-		
-		for(int i=0;i<strlen(my_id);i++){
-			Ya__hash_Ya__nonce__ida[MAX_PU_KEY_LENGTH + 2 + HASH_LENGTH + 2 + i] = (unsigned char)my_id[i];
-		}
+		copyTo(Ya__hash_Ya__nonce__ida + MAX_PU_KEY_LENGTH + 2 + HASH_LENGTH + 2, (unsigned char*)my_id , strlen(my_id));
 		
 		//print the buffer we are sending - Ya__hash_Ya__nonce__ida
-		printf("YA||(H(YA||nonce)||IDA) : ");
+		printf("YA||(H(YA||Nonce)||IDA) : ");
 		print(Ya__hash_Ya__nonce__ida,sizeof Ya__hash_Ya__nonce__ida);
 		
 		//Connect to Node - B
@@ -269,8 +263,8 @@ void* node_as_B(void* args){
 	if(nsfd != -1){
 		printf("Server established connection!\n");
 		
-		unsigned char nonce_xor_p__hash_nonce_xor_p__ida[NONCE_LENGTH + 2 + HASH_LENGTH];
-		unsigned char nonce_xor_password[NONCE_LENGTH];
+		unsigned char nonce_xor_p__hash_nonce_xor_p__ida[NONCE_LENGTH + 2 + HASH_LENGTH];//rcvd
+		unsigned char nonce_xor_password[NONCE_LENGTH];//rcvd
 		unsigned char nonce[NONCE_LENGTH];
 		unsigned char rcvd_hash_nonce_xor_p__ida[HASH_LENGTH];
 		
@@ -282,14 +276,12 @@ void* node_as_B(void* args){
 			return NULL;
 		}
 		
-		for(int i=0;i<NONCE_LENGTH;i++){
-			nonce_xor_password[i] = nonce_xor_p__hash_nonce_xor_p__ida[i];
-		}
+		//extract Nonce XOR Password from rcvd buffer
+		copyTo(nonce_xor_password,nonce_xor_p__hash_nonce_xor_p__ida,NONCE_LENGTH);
 		extract_nonce(nonce_xor_password,nonce);
 		
-		for(int i=0;i<HASH_LENGTH;i++){
-			rcvd_hash_nonce_xor_p__ida[i] = nonce_xor_p__hash_nonce_xor_p__ida[NONCE_LENGTH + 2 + i];
-		}
+		//extract H(Nonce XOR PB || IDA)
+		copyTo(rcvd_hash_nonce_xor_p__ida,nonce_xor_p__hash_nonce_xor_p__ida + NONCE_LENGTH + 2, HASH_LENGTH);
 		
 		printf("Rcvd(from Server) (Nonce XOR password)||IDA ");
 		printHash(rcvd_hash_nonce_xor_p__ida);
@@ -299,7 +291,7 @@ void* node_as_B(void* args){
 		if(nsfd_a != -1){
 			printf("Accepted Node - A's connection request!\n");
 			
-			unsigned char rcvd_Ya__hash_Ya__nonce__ida[MAX_PU_KEY_LENGTH + 2 + HASH_LENGTH + MAX_ID_LENGTH];
+			unsigned char rcvd_Ya__hash_Ya__nonce__ida[MAX_PU_KEY_LENGTH + 2 + HASH_LENGTH + 2 + MAX_ID_LENGTH];
 			unsigned char rcvd_Ya[MAX_PU_KEY_LENGTH];
 			unsigned char rcvd_hash_Ya__nonce[HASH_LENGTH];
 			unsigned char rcvd_ida[MAX_ID_LENGTH];
@@ -316,40 +308,32 @@ void* node_as_B(void* args){
 			print(rcvd_Ya__hash_Ya__nonce__ida,sizeof rcvd_Ya__hash_Ya__nonce__ida);
 			
 			//Extract YA
-			for(int i=0;i<MAX_PU_KEY_LENGTH;i++){
-				rcvd_Ya[i] = rcvd_Ya__hash_Ya__nonce__ida[i];
-				comp_Ya__nonce[i] = rcvd_Ya__hash_Ya__nonce__ida[i];
-			}
-			
+			copyTo(rcvd_Ya,rcvd_Ya__hash_Ya__nonce__ida,MAX_PU_KEY_LENGTH);
+			//print rcvd YA
 			printf("Rcvd YA : ");
 			print(rcvd_Ya,sizeof rcvd_Ya);
 			
 			//Extract H(YA||nonce)
-			for(int i=0;i<HASH_LENGTH;i++){
-				rcvd_hash_Ya__nonce[i] = rcvd_Ya__hash_Ya__nonce__ida[MAX_PU_KEY_LENGTH + 2 + i];
-			}
-			
+			copyTo(rcvd_hash_Ya__nonce,rcvd_Ya__hash_Ya__nonce__ida + MAX_PU_KEY_LENGTH + 2,HASH_LENGTH);
 			//printing hash of YA||nonce
 			printf("Rcvd YA||Nonce ");
 			printHash(rcvd_hash_Ya__nonce);
 			
 			//Extract IDA
-			for(int i=0;i<MAX_ID_LENGTH;i++){
-				rcvd_ida[i] = rcvd_Ya__hash_Ya__nonce__ida[MAX_PU_KEY_LENGTH + 2 + HASH_LENGTH + 2 + i];
-			}
-			
+			copyTo(rcvd_ida,rcvd_Ya__hash_Ya__nonce__ida + MAX_PU_KEY_LENGTH + 2 + HASH_LENGTH + 2,MAX_ID_LENGTH);
+			//print rcvd IDA (from A)
 			printf("Rcvd IDA from A : ");
 			print(rcvd_ida,sizeof rcvd_ida);
 			
+			
 			//Find YA||Nonce
+			copyTo(comp_Ya__nonce,rcvd_Ya__hash_Ya__nonce__ida,MAX_PU_KEY_LENGTH);
 			comp_Ya__nonce[MAX_PU_KEY_LENGTH] = comp_Ya__nonce[MAX_PU_KEY_LENGTH + 1] = '|';
+			copyTo(comp_Ya__nonce + MAX_PU_KEY_LENGTH + 2,nonce,NONCE_LENGTH);
 			
-			for(int i=0;i<NONCE_LENGTH;i++){
-				comp_Ya__nonce[MAX_PU_KEY_LENGTH + 2 + i] = nonce[i];//this nonce was sent by AS 
-			} 
-			
+			//find H(YA||Nonce)
 			computeSHA256(comp_Ya__nonce,sizeof comp_Ya__nonce,comp_hash_Ya__nonce);
-			
+			//print H(YA||Nonce) which is calculated
 			printf("Computed YA||Nonce ");
 			printHash(comp_hash_Ya__nonce);
 			
@@ -366,16 +350,12 @@ void* node_as_B(void* args){
 			unsigned char comp_nonce_xor_p__ida[NONCE_LENGTH + 2 + MAX_ID_LENGTH];
 			unsigned char comp_hash_nonce_xor_p__ida[HASH_LENGTH];
 			
-			for(int i=0;i<NONCE_LENGTH;i++){
-				comp_nonce_xor_p__ida[i] = nonce_xor_password[i];
-			}
-			
+			//find Nonce XOR P || IDA, with nonce XOR P rcvd from AS, IDA rcvd from A
+			copyTo(comp_nonce_xor_p__ida,nonce_xor_password,NONCE_LENGTH);
 			comp_nonce_xor_p__ida[NONCE_LENGTH] = comp_nonce_xor_p__ida[NONCE_LENGTH + 1] = '|';
+			copyTo(comp_nonce_xor_p__ida + NONCE_LENGTH + 2,rcvd_ida,MAX_ID_LENGTH);
 			
-			for(int i=0;i<MAX_ID_LENGTH;i++){
-				comp_nonce_xor_p__ida[NONCE_LENGTH + 2 + i] = rcvd_ida[i];
-			}
-			
+			//find H(Nonce XOR P || IDA)
 			computeSHA256(comp_nonce_xor_p__ida,sizeof comp_nonce_xor_p__ida,comp_hash_nonce_xor_p__ida);
 			printf("Computed Nonce XOR Password || IDA ");
 			printHash(comp_hash_nonce_xor_p__ida);
@@ -386,6 +366,36 @@ void* node_as_B(void* args){
 				printf("HASH MISMATCH!!\nTERMINATED\n");
 			}
 			printf("Hashes of Nonce XOR Password || IDA MATCHED..\n");
+			
+			//B sending YB||H(YB|| f(N1))||IDB  to A
+			
+			unsigned char Yb[MAX_PU_KEY_LENGTH];
+			unsigned char Yb__f_nonce[MAX_PU_KEY_LENGTH + 2 + NONCE_LENGTH];
+			unsigned char hash_Yb__f_nonce[HASH_LENGTH];
+			unsigned char Yb__hash_Yb__f_nonce__idb[MAX_PU_KEY_LENGTH + 2 + HASH_LENGTH + 2 + MAX_ID_LENGTH];
+			// Compute YB,later
+			
+			//print YB
+			printf("YB : ");
+			print(Yb,sizeof Yb);
+			
+			//compute YB||f(Nonce)
+			copyTo(Yb__f_nonce,Yb,MAX_PU_KEY_LENGTH);
+			Yb__f_nonce[MAX_PU_KEY_LENGTH] = Yb__f_nonce[MAX_PU_KEY_LENGTH + 1] = '|';
+			//manipulate nonce with function f => f(x) = (x + x.index)%256
+			for(int i=0;i<NONCE_LENGTH;i++){
+				Yb__f_nonce[MAX_PU_KEY_LENGTH + 2 + i] = (nonce[i] + i)%256;
+			}
+			
+			//print YB||f(nonce)
+			printf("YB || f(Nonce) : ");
+			print(Yb__f_nonce,sizeof Yb__f_nonce);
+			
+			//find H(YB||f(Nonce))
+			computeSHA256(Yb__f_nonce,sizeof Yb__f_nonce,hash_Yb__f_nonce);
+			printf("YB || f(Nonce) ");
+			printHash(hash_Yb__f_nonce);
+			
 			
 		}
 	}
