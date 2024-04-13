@@ -15,19 +15,18 @@ void find_primitive_root(mpz_t p) {
     while (mpz_cmp(a, q) <= 0) { // While a <= p-1
         int is_PR = 1; // Initialize is_PR to 1
         
-        
+     //   mpz_init2(all_ones, 2 * mpz_sizeinbase(p, 2)); 	
 	mpz_set_ui(all_ones, 2);
 	mpz_pow_ui(all_ones, all_ones, mpz_get_ui(p)); // all_ones = 2^(p)
 
 	mpz_sub_ui(all_ones, all_ones, 1); // all_ones = 2^(p) - 1
 	//gmp_printf("all ones at start of a %Zd : %ZX\n", a, all_ones);
     
-    /*
         // Loop from i to p-1
         mpz_set_ui(i, 1);	
         while( mpz_cmp(i, q) <= 0)  {
         //printf("started loop\n");
-        mpz_init2(rem, 2 * mpz_sizeinbase(p, 2)); 	
+        
 	    mpz_powm(rem, a, i, p); // power = a^i mod p
 	    // Check if the i-th bit is set in all_ones
 	    if (mpz_tstbit(all_ones,mpz_get_ui(rem)) == 1) {
@@ -41,7 +40,7 @@ void find_primitive_root(mpz_t p) {
 	    //gmp_printf("%ZX %Zd rem = %Zd\n",all_ones,i, rem);
 	    mpz_add_ui(i, i, 1);
 	    //printf("loop");
-	}*/
+	}
 
         if (is_PR) {
             gmp_printf("Primitive root (q) = %Zd\n", a);
@@ -61,7 +60,7 @@ int main() {
 
     // Generate a 2048-bit prime number
     mpz_init(prime);
-    mpz_urandomb(prime, state, 64);
+    mpz_urandomb(prime, state, 32);
     mpz_nextprime(prime, prime);
     gmp_printf("Generated Prime (p) = %Zd\n", prime);
 

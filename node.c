@@ -219,15 +219,62 @@ void* node_as_A(void* args){
 		int st = connect(bsfd,(struct sockaddr*)&b_addr,sizeof b_addr);
 		if(st<0){
 			perror("connect ");
-		}else{
-			perror("connect ");
-			printf("Connection with Node-B successful\n");
-			bytes_sent = send(bsfd,Ya__hash_Ya__nonce__ida,sizeof Ya__hash_Ya__nonce__ida,0);
-			if(bytes_sent != sizeof Ya__hash_Ya__nonce__ida){
-				perror("send ");
-			}
+			return NULL;
+		}
+		printf("Connection with Node-B successful\n");
+		bytes_sent = send(bsfd,Ya__hash_Ya__nonce__ida,sizeof Ya__hash_Ya__nonce__ida,0);
+		if(bytes_sent != sizeof Ya__hash_Ya__nonce__ida){
+			perror("send ");
+			return NULL;
 		}
 		
+		//rcv YB||H(YB||f(Nonce))||IDB from B
+		unsigned char rcvd_Yb__hash_Yb__f_nonce__idb[MAX_PU_KEY_LENGTH + 2 + HASH_LENGTH + 2 + MAX_ID_LENGTH];
+		unsigned char comp_Yb__f_nonce[MAX_PU_KEY_LENGTH + 2 + HASH_LENGTH];
+		unsigned char comp_hash_Yb__f_nonce[HASH_LENGTH];
+		
+		bytes_read = recv(bsfd,rcvd_Yb__hash_Yb__f_nonce__idb,sizeof rcvd_Yb__hash_Yb__f_nonce__idb,0);
+		
+		printf("Rcvd YB||H(YB||f(Nonce))||IDB : ");
+		print(rcvd_Yb__hash_Yb__f_nonce__idb,sizeof rcvd_Yb__hash_Yb__f_nonce__idb);
+		
+		//find YB||f(Nonce) from rcvd YB and Nonce from Server
+		copyTo(comp_Yb__f_nonce,rcvd_Yb__hash_Yb__f_nonce__idb,MAX_PU_KEY_LENGTH);
+		comp_Yb__f_nonce[MAX_PU_KEY_LENGTH] = comp_Yb__f_nonce[MAX_PU_KEY_LENGTH + 1] = '|';
+		for(int i=0;i<NONCE_LENGTH;i++){
+			comp_Yb__f_nonce[MAX_PU_KEY_LENGTH + 2 + i] = (nonce[i] + i)%256;
+		}
+		
+		//find H(YB||f(Nonce))
+		computeSHA256(comp_Yb__f_nonce,sizeof comp_Yb__f_nonce,comp_hash_Yb__f_nonce);
+		printf("Computed YB||f(Nonce) : ");
+		printHash(comp_hash_Yb__f_nonce);
+		
+		int is_hash_Yb__f_nonce_matched = checkIfHashMatch(comp_hash_Yb__f_nonce,rcvd_Yb__hash_Yb__f_nonce__idb + MAX_PU_KEY_LENGTH + 2);
+		if(is_hash_Yb__f_nonce_matched){
+			printf("Rcvd and computed H(YB||f(Nonce)) MATCHED!!\n");
+		}else{
+			printf("MISMATCH IN HASHES!!TERMINATED..\n");
+			return NULL;
+		}
+		
+		//compute secret key
+		
+		//send H(Nonce) to B
+		unsigned char hash_nonce[HASH_LENGTH];
+		computeSHA256(nonce,sizeof nonce,hash_nonce);
+		printf("Nonce ");
+		printHash(hash_nonce);
+		
+		bytes_sent = send(bsfd,hash_nonce,sizeof hash_nonce,0);
+		if(bytes_sent != sizeof hash_nonce){
+			perror("send ");
+			return NULL;
+		}
+		printf("Sent H(Nonce) to Node-B successfully...\n\n");
+		
+		close(bsfd);
+		close(sfd);
 	}
 }
 
@@ -396,6 +443,42 @@ void* node_as_B(void* args){
 			printf("YB || f(Nonce) ");
 			printHash(hash_Yb__f_nonce);
 			
+			//compute YB||H(YB||f(Nonce))||IDB
+			copyTo(Yb__hash_Yb__f_nonce__idb,Yb,MAX_PU_KEY_LENGTH);
+			Yb__hash_Yb__f_nonce__idb[MAX_PU_KEY_LENGTH] = Yb__hash_Yb__f_nonce__idb[MAX_PU_KEY_LENGTH + 1] = '|';
+			copyTo(Yb__hash_Yb__f_nonce__idb + MAX_PU_KEY_LENGTH + 2,hash_Yb__f_nonce,HASH_LENGTH);
+			Yb__hash_Yb__f_nonce__idb[MAX_PU_KEY_LENGTH + 2 + HASH_LENGTH] = Yb__hash_Yb__f_nonce__idb[MAX_PU_KEY_LENGTH + 2 + HASH_LENGTH + 1] = '|';
+			copyTo(Yb__hash_Yb__f_nonce__idb + MAX_PU_KEY_LENGTH + 2 + HASH_LENGTH + 2,(unsigned char*)my_id,strlen(my_id));
+			
+			printf("Computed YB||H(YB||f(Nonce))||IDB :");
+			print(Yb__hash_Yb__f_nonce__idb,sizeof Yb__hash_Yb__f_nonce__idb);
+			
+			//send YB||H(YB||f(Nonce))||IDB to A
+			bytes_sent = send(nsfd_a,Yb__hash_Yb__f_nonce__idb,sizeof Yb__hash_Yb__f_nonce__idb,0);
+			if(bytes_sent != sizeof Yb__hash_Yb__f_nonce__idb){
+				perror("Send ");
+				return NULL;
+			}
+			
+			//compute secret key
+			
+			//rcv H(Nonce)
+			unsigned char rcvd_hash_nonce[HASH_LENGTH];
+			unsigned char comp_hash_nonce[HASH_LENGTH];
+			bytes_read = recv(nsfd_a,rcvd_hash_nonce,sizeof rcvd_hash_nonce,0);
+			if(bytes_read == -1){
+				perror("recv ");
+				return NULL;
+			}
+			computeSHA256(nonce,sizeof nonce,comp_hash_nonce);
+			
+			if(checkIfHashMatch(rcvd_hash_nonce,comp_hash_nonce)){
+				printf("Key Exchange Successful....\nTerminating the session..\n");
+			}else{
+				printf("Unsuccessful Key Exchange..\nRestart the process..\nSession Terminated\n\n");
+			}
+			close(nsfd_a);
+			close(nsfd);
 			
 		}
 	}
@@ -428,9 +511,11 @@ int main(){
 	getchar();
 	if(c != 'Y'){
 		pthread_create(&B,NULL,node_as_B,NULL);
+		pthread_join(B,NULL);
 	}else{
 		pthread_create(&A,NULL,node_as_A,NULL);
+		pthread_join(A,NULL);
 	}
-		
-	while(1){}
+	
+	
 }
