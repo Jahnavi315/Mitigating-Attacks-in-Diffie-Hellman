@@ -99,7 +99,7 @@ void* serve_clients(void* args){
 
 	int bytes_read,bytes_sent;
 		
-	printf("server thread initiated\n");
+	printf("server thread initiated\n\n");
 	int nsfd = *(int*)args;
 	
 	//rcv ids
@@ -111,7 +111,7 @@ void* serve_clients(void* args){
 		perror("rcv");
 	}else{
 		ids[bytes_read] = '\0';
-		printf("rcvd ids %s\n",ids);
+		printf("rcvd ids %s\n\n",ids);
 	}
 	
 	//seperate ids
@@ -154,13 +154,13 @@ void* serve_clients(void* args){
     		printf("Error: Unable to extract ipaddr of node-B\n");
     	}
 
-    	printf("id1: %s\n", id1);
-    	printf("id2: %s\n", id2);
-    	printf("ipaddr : %s\n",ipaddr);
+    	//printf("id1: %s\n", id1);
+    	//printf("id2: %s\n", id2);
+    	//printf("ipaddr : %s\n",ipaddr);
 	
 	//generating nonce
 	mpz_urandomb(random_number, state, 256);
-    	gmp_printf("Nonce : %ZX\n", random_number);
+    	//gmp_printf("Nonce : %ZX\n", random_number);
     	
     	size_t size = mpz_sizeinbase(random_number, 2);
     	int extra_bits = size % 8;
@@ -168,7 +168,7 @@ void* serve_clients(void* args){
     	if(extra_bits){
     		size++;
     	}
-	printf("Size reqd : %ld\n",size);
+	//printf("Size reqd : %ld\n",size);
 	if(size < NONCE_LENGTH){
 		printf("TOO SMALL NONCE GENERATED\n");
 	}
@@ -177,7 +177,7 @@ void* serve_clients(void* args){
 	size_t count;
     	mpz_export(nonce, &count, 1, sizeof(unsigned char), 1, 0, random_number);
 	
-	printf("Count : %ld\n",count);
+	//printf("Count : %ld\n",count);
     	printf("Nonce : ");
     	print(nonce,NONCE_LENGTH);
     	
@@ -220,14 +220,15 @@ void* serve_clients(void* args){
 		printf("Error in search operation : Id(s) not found\n");
 	}else{
 		//printing passwords
-		printf("Password for ID %s: %s\n", id1, password1);
+	/*	printf("Password for ID %s: %s\n", id1, password1);
 		printf("Password-A : ");
 	    	print((unsigned char*)password1,strlen(password1));
 	    	
 		printf("Password for ID %s: %s\n", id2, password2);
 		printf("Password-B : ");
 	    	print((unsigned char*)password2,strlen(password2));
-		printf("Fetched passwords successfully!\n");
+	*/
+		printf("\nFetched passwords successfully!\n\n");
 		
 		//XOR passwords with nonce
 		
@@ -255,11 +256,8 @@ void* serve_clients(void* args){
 				nonce_xor_password2[i] = nonce[i];
 			}
 		}
-		
-		//printing xored nonce
-		printf("Nonce XOR PB : ");
-		print(nonce_xor_password2,NONCE_LENGTH);
-	    	
+		printf("Sending Nonce XOR PA to Node-A\n\n");
+			    	
 	    	//sending nonce XOR password1 to node-1(A)
 	    	bytes_sent = send(nsfd,nonce_xor_password1,count,0);
 	    	if(bytes_sent != count){
@@ -284,7 +282,7 @@ void* serve_clients(void* args){
 		if(st<0){
 			perror("connect ");
 		}else{
-			printf("Connection to node - B successful\n");
+			printf("Connection to node - B successful\n\n");
 			
 			unsigned char nonce_xor_p2__id[NONCE_LENGTH + 2 + MAX_ID_LENGTH];
 			unsigned char hash_nonce_xor_p2__id[HASH_LENGTH];
@@ -301,13 +299,19 @@ void* serve_clients(void* args){
 				nonce_xor_p2__id[NONCE_LENGTH + 2 + i] = (unsigned char)id1[i];
 			}
 			
-			printf("(nonce XOR PB)||IDA : ");
+			//printing xored nonce
+			printf("Nonce XOR PB : ");
+			print(nonce_xor_password2,NONCE_LENGTH);
+			
+			printf("(Nonce XOR PB)||IDA : ");
 		    	print(nonce_xor_p2__id,sizeof nonce_xor_p2__id);
 		    	
 		    	
 		    	computeSHA256(nonce_xor_p2__id,sizeof nonce_xor_p2__id,hash_nonce_xor_p2__id);
-		    	printf("(nonce XOR PB)||IDA ");
-		    	printHash(hash_nonce_xor_p2__id);
+		    	//printf("(Nonce XOR PB)||IDA ");
+		    	//printHash(hash_nonce_xor_p2__id);
+		    	
+		    	printf("Sending (nonce XOR PB) and H((nonce XOR PB)||IDA) to NOde-B..\n");
 			
 			for(int i=0;i<HASH_LENGTH;i++){
 				nonce_xor_p2__hash_nonce_xor_p2__id[NONCE_LENGTH + 2 + i] = hash_nonce_xor_p2__id[i];

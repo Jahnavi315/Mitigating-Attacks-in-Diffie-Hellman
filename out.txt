@@ -1,127 +1,1262 @@
-Generated Prime (p) = 127
-Checked 2
-Checked 3
-Checked 4
-Checked 5
-Checked 6
-Checked 7
-Checked 8
-Checked 9
-Checked 10
-Checked 11
-Checked 12
-Checked 13
-Checked 14
-Checked 15
-Checked 16
-Checked 17
-Checked 18
-Checked 19
-Checked 20
-Checked 21
-Checked 22
-Checked 23
-Checked 24
-Checked 25
-Checked 26
-Checked 27
-Checked 28
-Checked 29
-Checked 30
-Checked 31
-Checked 32
-Checked 33
-Checked 34
-Checked 35
-Checked 36
-Checked 37
-Checked 38
-Checked 39
-Checked 40
-Checked 41
-Checked 42
-Checked 43
-Checked 44
-Checked 45
-Checked 46
-Checked 47
-Checked 48
-Checked 49
-Checked 50
-Checked 51
-Checked 52
-Checked 53
-Checked 54
-Checked 55
-Checked 56
-Checked 57
-Checked 58
-Checked 59
-Checked 60
-Checked 61
-Checked 62
-Checked 63
-Checked 64
-Checked 65
-Checked 66
-Checked 67
-Checked 68
-Checked 69
-Checked 70
-Checked 71
-Checked 72
-Checked 73
-Checked 74
-Checked 75
-Checked 76
-Checked 77
-Checked 78
-Checked 79
-Checked 80
-Checked 81
-Checked 82
-Checked 83
-Checked 84
-Checked 85
-Checked 86
-Checked 87
-Checked 88
-Checked 89
-Checked 90
-Checked 91
-Checked 92
-Checked 93
-Checked 94
-Checked 95
-Checked 96
-Checked 97
-Checked 98
-Checked 99
-Checked 100
-Checked 101
-Checked 102
-Checked 103
-Checked 104
-Checked 105
-Checked 106
-Checked 107
-Checked 108
-Checked 109
-Checked 110
-Checked 111
-Checked 112
-Checked 113
-Checked 114
-Checked 115
-Checked 116
-Checked 117
-Checked 118
-Checked 119
-Checked 120
-Checked 121
-Checked 122
-Checked 123
-Checked 124
-Checked 125
-Checked 126
-Primitive Root (q) = 127
+
+*******************NETWORK PACKET*******************
+
+********ETHERNET HEADER********
+
+	|-Source Address : 00-00-00-00-00-00
+	|-Destination Address : 00-00-00-00-00-00
+	|-Protocol : 2048
+
+********IP HEADER********
+
+	|-Version : 4
+	|-Internet Header Length : 5 DWORDS or 20 Bytes
+ 	|-Type Of Service : 0
+ 	|-Total Length : 60 Bytes
+ 	|-Identification : 51270
+ 	|-Time To Live : 64
+ 	|-Protocol : 6
+ 	|-Header Checksum : 29807
+ 	|-Source IP : 127.0.0.1
+ 	|-Destination IP : 127.0.0.5
+ 
+********TCP HEADER********
+
+	|-Source Port      : 34344
+	|-Destination Port : 9898
+	|-Sequence Number    : 710863729
+	|-Acknowledge Number : 0
+	|-Header Length      : 10 DWORDS or 40 BYTES
+		|-Urgent Flag          : 0
+		|-Acknowledgement Flag : 0
+		|-Push Flag            : 0
+		|-Reset Flag           : 0
+		|-Synchronise Flag     : 1
+		|-Finish Flag          : 0
+	|-Window         : 65495
+	|-Checksum       : 65076
+	|-Urgent Pointer : 0
+	|-Data : 
+Hex-data : 
+
+*******************NETWORK PACKET*******************
+
+********ETHERNET HEADER********
+
+	|-Source Address : 00-00-00-00-00-00
+	|-Destination Address : 00-00-00-00-00-00
+	|-Protocol : 2048
+
+********IP HEADER********
+
+	|-Version : 4
+	|-Internet Header Length : 5 DWORDS or 20 Bytes
+ 	|-Type Of Service : 0
+ 	|-Total Length : 60 Bytes
+ 	|-Identification : 0
+ 	|-Time To Live : 64
+ 	|-Protocol : 6
+ 	|-Header Checksum : 15542
+ 	|-Source IP : 127.0.0.5
+ 	|-Destination IP : 127.0.0.1
+ 
+********TCP HEADER********
+
+	|-Source Port      : 9898
+	|-Destination Port : 34344
+	|-Sequence Number    : 403347412
+	|-Acknowledge Number : 710863730
+	|-Header Length      : 10 DWORDS or 40 BYTES
+		|-Urgent Flag          : 0
+		|-Acknowledgement Flag : 1
+		|-Push Flag            : 0
+		|-Reset Flag           : 0
+		|-Synchronise Flag     : 1
+		|-Finish Flag          : 0
+	|-Window         : 65483
+	|-Checksum       : 65076
+	|-Urgent Pointer : 0
+	|-Data : 
+Hex-data : 
+
+*******************NETWORK PACKET*******************
+
+********ETHERNET HEADER********
+
+	|-Source Address : 00-00-00-00-00-00
+	|-Destination Address : 00-00-00-00-00-00
+	|-Protocol : 2048
+
+********IP HEADER********
+
+	|-Version : 4
+	|-Internet Header Length : 5 DWORDS or 20 Bytes
+ 	|-Type Of Service : 0
+ 	|-Total Length : 52 Bytes
+ 	|-Identification : 51271
+ 	|-Time To Live : 64
+ 	|-Protocol : 6
+ 	|-Header Checksum : 29814
+ 	|-Source IP : 127.0.0.1
+ 	|-Destination IP : 127.0.0.5
+ 
+********TCP HEADER********
+
+	|-Source Port      : 34344
+	|-Destination Port : 9898
+	|-Sequence Number    : 710863730
+	|-Acknowledge Number : 403347413
+	|-Header Length      : 8 DWORDS or 32 BYTES
+		|-Urgent Flag          : 0
+		|-Acknowledgement Flag : 1
+		|-Push Flag            : 0
+		|-Reset Flag           : 0
+		|-Synchronise Flag     : 0
+		|-Finish Flag          : 0
+	|-Window         : 512
+	|-Checksum       : 65068
+	|-Urgent Pointer : 0
+	|-Data : „»gÄ
+Hex-data : E3 C8 67 80 01 03 03 07 
+
+*******************NETWORK PACKET*******************
+
+********ETHERNET HEADER********
+
+	|-Source Address : 00-00-00-00-00-00
+	|-Destination Address : 00-00-00-00-00-00
+	|-Protocol : 2048
+
+********IP HEADER********
+
+	|-Version : 4
+	|-Internet Header Length : 5 DWORDS or 20 Bytes
+ 	|-Type Of Service : 0
+ 	|-Total Length : 67 Bytes
+ 	|-Identification : 51272
+ 	|-Time To Live : 64
+ 	|-Protocol : 6
+ 	|-Header Checksum : 29798
+ 	|-Source IP : 127.0.0.1
+ 	|-Destination IP : 127.0.0.5
+ 
+********TCP HEADER********
+
+	|-Source Port      : 34344
+	|-Destination Port : 9898
+	|-Sequence Number    : 710863730
+	|-Acknowledge Number : 403347413
+	|-Header Length      : 8 DWORDS or 32 BYTES
+		|-Urgent Flag          : 0
+		|-Acknowledgement Flag : 1
+		|-Push Flag            : 1
+		|-Reset Flag           : 0
+		|-Synchronise Flag     : 0
+		|-Finish Flag          : 0
+	|-Window         : 512
+	|-Checksum       : 65083
+	|-Urgent Pointer : 0
+	|-Data : 1||2||127.2.2.2
+Hex-data : 31 7C 7C 32 7C 7C 31 32 37 2E 32 2E 32 2E 32 
+
+*******************NETWORK PACKET*******************
+
+********ETHERNET HEADER********
+
+	|-Source Address : 00-00-00-00-00-00
+	|-Destination Address : 00-00-00-00-00-00
+	|-Protocol : 2048
+
+********IP HEADER********
+
+	|-Version : 4
+	|-Internet Header Length : 5 DWORDS or 20 Bytes
+ 	|-Type Of Service : 0
+ 	|-Total Length : 52 Bytes
+ 	|-Identification : 21102
+ 	|-Time To Live : 64
+ 	|-Protocol : 6
+ 	|-Header Checksum : 59983
+ 	|-Source IP : 127.0.0.5
+ 	|-Destination IP : 127.0.0.1
+ 
+********TCP HEADER********
+
+	|-Source Port      : 9898
+	|-Destination Port : 34344
+	|-Sequence Number    : 403347413
+	|-Acknowledge Number : 710863745
+	|-Header Length      : 8 DWORDS or 32 BYTES
+		|-Urgent Flag          : 0
+		|-Acknowledgement Flag : 1
+		|-Push Flag            : 0
+		|-Reset Flag           : 0
+		|-Synchronise Flag     : 0
+		|-Finish Flag          : 0
+	|-Window         : 512
+	|-Checksum       : 65068
+	|-Urgent Pointer : 0
+	|-Data : 1||2||127.2.2.2
+Hex-data : 31 7C 7C 32 7C 7C 31 32 37 2E 32 2E 32 2E 32 
+
+*******************NETWORK PACKET*******************
+
+********ETHERNET HEADER********
+
+	|-Source Address : 00-00-00-00-00-00
+	|-Destination Address : 00-00-00-00-00-00
+	|-Protocol : 2048
+
+********IP HEADER********
+
+	|-Version : 4
+	|-Internet Header Length : 5 DWORDS or 20 Bytes
+ 	|-Type Of Service : 0
+ 	|-Total Length : 84 Bytes
+ 	|-Identification : 21103
+ 	|-Time To Live : 64
+ 	|-Protocol : 6
+ 	|-Header Checksum : 59950
+ 	|-Source IP : 127.0.0.5
+ 	|-Destination IP : 127.0.0.1
+ 
+********TCP HEADER********
+
+	|-Source Port      : 9898
+	|-Destination Port : 34344
+	|-Sequence Number    : 403347413
+	|-Acknowledge Number : 710863745
+	|-Header Length      : 8 DWORDS or 32 BYTES
+		|-Urgent Flag          : 0
+		|-Acknowledgement Flag : 1
+		|-Push Flag            : 1
+		|-Reset Flag           : 0
+		|-Synchronise Flag     : 0
+		|-Finish Flag          : 0
+	|-Window         : 512
+	|-Checksum       : 65100
+	|-Urgent Pointer : 0
+	|-Data : ¥¯"ŸY1AóF{z 5>∑K˜†Z?Ü.ˆDBãD
+Hex-data : B4 F8 22 D9 59 31 41 97 46 7B 17 7A 20 35 3E B7 4B F7 A0 5A 06 3F 08 86 2E F6 14 18 44 42 8B 44 
+
+*******************NETWORK PACKET*******************
+
+********ETHERNET HEADER********
+
+	|-Source Address : 00-00-00-00-00-00
+	|-Destination Address : 00-00-00-00-00-00
+	|-Protocol : 2048
+
+********IP HEADER********
+
+	|-Version : 4
+	|-Internet Header Length : 5 DWORDS or 20 Bytes
+ 	|-Type Of Service : 0
+ 	|-Total Length : 52 Bytes
+ 	|-Identification : 51273
+ 	|-Time To Live : 64
+ 	|-Protocol : 6
+ 	|-Header Checksum : 29812
+ 	|-Source IP : 127.0.0.1
+ 	|-Destination IP : 127.0.0.5
+ 
+********TCP HEADER********
+
+	|-Source Port      : 34344
+	|-Destination Port : 9898
+	|-Sequence Number    : 710863745
+	|-Acknowledge Number : 403347445
+	|-Header Length      : 8 DWORDS or 32 BYTES
+		|-Urgent Flag          : 0
+		|-Acknowledgement Flag : 1
+		|-Push Flag            : 0
+		|-Reset Flag           : 0
+		|-Synchronise Flag     : 0
+		|-Finish Flag          : 0
+	|-Window         : 512
+	|-Checksum       : 65068
+	|-Urgent Pointer : 0
+	|-Data : ¥¯"ŸY1AóF{z 5>∑K˜†Z?Ü.ˆDBãD
+Hex-data : B4 F8 22 D9 59 31 41 97 46 7B 17 7A 20 35 3E B7 4B F7 A0 5A 06 3F 08 86 2E F6 14 18 44 42 8B 44 
+
+*******************NETWORK PACKET*******************
+
+********ETHERNET HEADER********
+
+	|-Source Address : 00-00-00-00-00-00
+	|-Destination Address : 00-00-00-00-00-00
+	|-Protocol : 2048
+
+********IP HEADER********
+
+	|-Version : 4
+	|-Internet Header Length : 5 DWORDS or 20 Bytes
+ 	|-Type Of Service : 0
+ 	|-Total Length : 60 Bytes
+ 	|-Identification : 20326
+ 	|-Time To Live : 64
+ 	|-Protocol : 6
+ 	|-Header Checksum : 60240
+ 	|-Source IP : 127.0.0.1
+ 	|-Destination IP : 127.2.2.2
+ 
+********TCP HEADER********
+
+	|-Source Port      : 48196
+	|-Destination Port : 9999
+	|-Sequence Number    : 1733028040
+	|-Acknowledge Number : 0
+	|-Header Length      : 10 DWORDS or 40 BYTES
+		|-Urgent Flag          : 0
+		|-Acknowledgement Flag : 0
+		|-Push Flag            : 0
+		|-Reset Flag           : 0
+		|-Synchronise Flag     : 1
+		|-Finish Flag          : 0
+	|-Window         : 65495
+	|-Checksum       : 52
+	|-Urgent Pointer : 0
+	|-Data : F{z 5>∑K˜†Z?Ü.ˆDBãD
+Hex-data : 46 7B 17 7A 20 35 3E B7 4B F7 A0 5A 06 3F 08 86 2E F6 14 18 44 42 8B 44 
+
+*******************NETWORK PACKET*******************
+
+********ETHERNET HEADER********
+
+	|-Source Address : 00-00-00-00-00-00
+	|-Destination Address : 00-00-00-00-00-00
+	|-Protocol : 2048
+
+********IP HEADER********
+
+	|-Version : 4
+	|-Internet Header Length : 5 DWORDS or 20 Bytes
+ 	|-Type Of Service : 0
+ 	|-Total Length : 60 Bytes
+ 	|-Identification : 0
+ 	|-Time To Live : 64
+ 	|-Protocol : 6
+ 	|-Header Checksum : 15031
+ 	|-Source IP : 127.2.2.2
+ 	|-Destination IP : 127.0.0.1
+ 
+********TCP HEADER********
+
+	|-Source Port      : 9999
+	|-Destination Port : 48196
+	|-Sequence Number    : 1969452674
+	|-Acknowledge Number : 1733028041
+	|-Header Length      : 10 DWORDS or 40 BYTES
+		|-Urgent Flag          : 0
+		|-Acknowledgement Flag : 1
+		|-Push Flag            : 0
+		|-Reset Flag           : 0
+		|-Synchronise Flag     : 1
+		|-Finish Flag          : 0
+	|-Window         : 65483
+	|-Checksum       : 52
+	|-Urgent Pointer : 0
+	|-Data : F{z 5>∑K˜†Z?Ü.ˆDBãD
+Hex-data : 46 7B 17 7A 20 35 3E B7 4B F7 A0 5A 06 3F 08 86 2E F6 14 18 44 42 8B 44 
+
+*******************NETWORK PACKET*******************
+
+********ETHERNET HEADER********
+
+	|-Source Address : 00-00-00-00-00-00
+	|-Destination Address : 00-00-00-00-00-00
+	|-Protocol : 2048
+
+********IP HEADER********
+
+	|-Version : 4
+	|-Internet Header Length : 5 DWORDS or 20 Bytes
+ 	|-Type Of Service : 0
+ 	|-Total Length : 52 Bytes
+ 	|-Identification : 20327
+ 	|-Time To Live : 64
+ 	|-Protocol : 6
+ 	|-Header Checksum : 60247
+ 	|-Source IP : 127.0.0.1
+ 	|-Destination IP : 127.2.2.2
+ 
+********TCP HEADER********
+
+	|-Source Port      : 48196
+	|-Destination Port : 9999
+	|-Sequence Number    : 1733028041
+	|-Acknowledge Number : 1969452675
+	|-Header Length      : 8 DWORDS or 32 BYTES
+		|-Urgent Flag          : 0
+		|-Acknowledgement Flag : 1
+		|-Push Flag            : 0
+		|-Reset Flag           : 0
+		|-Synchronise Flag     : 0
+		|-Finish Flag          : 0
+	|-Window         : 512
+	|-Checksum       : 44
+	|-Urgent Pointer : 0
+	|-Data : Ì0©çF{z 5>∑K˜†Z?Ü.ˆDBãD
+Hex-data : ED 30 A9 8D 01 03 03 07 46 7B 17 7A 20 35 3E B7 4B F7 A0 5A 06 3F 08 86 2E F6 14 18 44 42 8B 44 
+
+*******************NETWORK PACKET*******************
+
+********ETHERNET HEADER********
+
+	|-Source Address : 00-00-00-00-00-00
+	|-Destination Address : 00-00-00-00-00-00
+	|-Protocol : 2048
+
+********IP HEADER********
+
+	|-Version : 4
+	|-Internet Header Length : 5 DWORDS or 20 Bytes
+ 	|-Type Of Service : 0
+ 	|-Total Length : 118 Bytes
+ 	|-Identification : 20328
+ 	|-Time To Live : 64
+ 	|-Protocol : 6
+ 	|-Header Checksum : 60180
+ 	|-Source IP : 127.0.0.1
+ 	|-Destination IP : 127.2.2.2
+ 
+********TCP HEADER********
+
+	|-Source Port      : 48196
+	|-Destination Port : 9999
+	|-Sequence Number    : 1733028041
+	|-Acknowledge Number : 1969452675
+	|-Header Length      : 8 DWORDS or 32 BYTES
+		|-Urgent Flag          : 0
+		|-Acknowledgement Flag : 1
+		|-Push Flag            : 1
+		|-Reset Flag           : 0
+		|-Synchronise Flag     : 0
+		|-Finish Flag          : 0
+	|-Window         : 512
+	|-Checksum       : 110
+	|-Urgent Pointer : 0
+	|-Data : ¥¯"ŸY1AóF{z 5>∑K˜†Z?Ü.ˆDBãG||Y@“√/?ÜÈ…ÅÄH‘æÇ
+Hex-data : B4 F8 22 D9 59 31 41 97 46 7B 17 7A 20 35 3E B7 4B F7 A0 5A 06 3F 08 86 2E F6 14 18 44 42 8B 47 7C 7C F0 05 59 40 D2 0C 17 C3 2F 3F 86 E9 C9 81 80 48 D4 BE 82 
+
+*******************NETWORK PACKET*******************
+
+********ETHERNET HEADER********
+
+	|-Source Address : 00-00-00-00-00-00
+	|-Destination Address : 00-00-00-00-00-00
+	|-Protocol : 2048
+
+********IP HEADER********
+
+	|-Version : 4
+	|-Internet Header Length : 5 DWORDS or 20 Bytes
+ 	|-Type Of Service : 0
+ 	|-Total Length : 52 Bytes
+ 	|-Identification : 49750
+ 	|-Time To Live : 64
+ 	|-Protocol : 6
+ 	|-Header Checksum : 30824
+ 	|-Source IP : 127.2.2.2
+ 	|-Destination IP : 127.0.0.1
+ 
+********TCP HEADER********
+
+	|-Source Port      : 9999
+	|-Destination Port : 48196
+	|-Sequence Number    : 1969452675
+	|-Acknowledge Number : 1733028107
+	|-Header Length      : 8 DWORDS or 32 BYTES
+		|-Urgent Flag          : 0
+		|-Acknowledgement Flag : 1
+		|-Push Flag            : 0
+		|-Reset Flag           : 0
+		|-Synchronise Flag     : 0
+		|-Finish Flag          : 0
+	|-Window         : 512
+	|-Checksum       : 44
+	|-Urgent Pointer : 0
+	|-Data : ¥¯"ŸY1AóF{z 5>∑K˜†Z?Ü.ˆDBãG||Y@“√/?ÜÈ…ÅÄH‘æÇ
+Hex-data : B4 F8 22 D9 59 31 41 97 46 7B 17 7A 20 35 3E B7 4B F7 A0 5A 06 3F 08 86 2E F6 14 18 44 42 8B 47 7C 7C F0 05 59 40 D2 0C 17 C3 2F 3F 86 E9 C9 81 80 48 D4 BE 82 
+
+*******************NETWORK PACKET*******************
+
+********ETHERNET HEADER********
+
+	|-Source Address : 00-00-00-00-00-00
+	|-Destination Address : 00-00-00-00-00-00
+	|-Protocol : 2048
+
+********IP HEADER********
+
+	|-Version : 4
+	|-Internet Header Length : 5 DWORDS or 20 Bytes
+ 	|-Type Of Service : 0
+ 	|-Total Length : 60 Bytes
+ 	|-Identification : 53887
+ 	|-Time To Live : 64
+ 	|-Protocol : 6
+ 	|-Header Checksum : 26679
+ 	|-Source IP : 127.0.0.1
+ 	|-Destination IP : 127.2.2.2
+ 
+********TCP HEADER********
+
+	|-Source Port      : 48204
+	|-Destination Port : 9999
+	|-Sequence Number    : 3610529961
+	|-Acknowledge Number : 0
+	|-Header Length      : 10 DWORDS or 40 BYTES
+		|-Urgent Flag          : 0
+		|-Acknowledgement Flag : 0
+		|-Push Flag            : 0
+		|-Reset Flag           : 0
+		|-Synchronise Flag     : 1
+		|-Finish Flag          : 0
+	|-Window         : 65495
+	|-Checksum       : 52
+	|-Urgent Pointer : 0
+	|-Data : F{z 5>∑K˜†Z?Ü.ˆDBãG||Y@“√/?ÜÈ…ÅÄH‘æÇ
+Hex-data : 46 7B 17 7A 20 35 3E B7 4B F7 A0 5A 06 3F 08 86 2E F6 14 18 44 42 8B 47 7C 7C F0 05 59 40 D2 0C 17 C3 2F 3F 86 E9 C9 81 80 48 D4 BE 82 
+
+*******************NETWORK PACKET*******************
+
+********ETHERNET HEADER********
+
+	|-Source Address : 00-00-00-00-00-00
+	|-Destination Address : 00-00-00-00-00-00
+	|-Protocol : 2048
+
+********IP HEADER********
+
+	|-Version : 4
+	|-Internet Header Length : 5 DWORDS or 20 Bytes
+ 	|-Type Of Service : 0
+ 	|-Total Length : 60 Bytes
+ 	|-Identification : 0
+ 	|-Time To Live : 64
+ 	|-Protocol : 6
+ 	|-Header Checksum : 15031
+ 	|-Source IP : 127.2.2.2
+ 	|-Destination IP : 127.0.0.1
+ 
+********TCP HEADER********
+
+	|-Source Port      : 9999
+	|-Destination Port : 48204
+	|-Sequence Number    : 104617935
+	|-Acknowledge Number : 3610529962
+	|-Header Length      : 10 DWORDS or 40 BYTES
+		|-Urgent Flag          : 0
+		|-Acknowledgement Flag : 1
+		|-Push Flag            : 0
+		|-Reset Flag           : 0
+		|-Synchronise Flag     : 1
+		|-Finish Flag          : 0
+	|-Window         : 65483
+	|-Checksum       : 52
+	|-Urgent Pointer : 0
+	|-Data : F{z 5>∑K˜†Z?Ü.ˆDBãG||Y@“√/?ÜÈ…ÅÄH‘æÇ
+Hex-data : 46 7B 17 7A 20 35 3E B7 4B F7 A0 5A 06 3F 08 86 2E F6 14 18 44 42 8B 47 7C 7C F0 05 59 40 D2 0C 17 C3 2F 3F 86 E9 C9 81 80 48 D4 BE 82 
+
+*******************NETWORK PACKET*******************
+
+********ETHERNET HEADER********
+
+	|-Source Address : 00-00-00-00-00-00
+	|-Destination Address : 00-00-00-00-00-00
+	|-Protocol : 2048
+
+********IP HEADER********
+
+	|-Version : 4
+	|-Internet Header Length : 5 DWORDS or 20 Bytes
+ 	|-Type Of Service : 0
+ 	|-Total Length : 52 Bytes
+ 	|-Identification : 53888
+ 	|-Time To Live : 64
+ 	|-Protocol : 6
+ 	|-Header Checksum : 26686
+ 	|-Source IP : 127.0.0.1
+ 	|-Destination IP : 127.2.2.2
+ 
+********TCP HEADER********
+
+	|-Source Port      : 48204
+	|-Destination Port : 9999
+	|-Sequence Number    : 3610529962
+	|-Acknowledge Number : 104617936
+	|-Header Length      : 8 DWORDS or 32 BYTES
+		|-Urgent Flag          : 0
+		|-Acknowledgement Flag : 1
+		|-Push Flag            : 0
+		|-Reset Flag           : 0
+		|-Synchronise Flag     : 0
+		|-Finish Flag          : 0
+	|-Window         : 512
+	|-Checksum       : 44
+	|-Urgent Pointer : 0
+	|-Data : Ì0∞ŸF{z 5>∑K˜†Z?Ü.ˆDBãG||Y@“√/?ÜÈ…ÅÄH‘æÇ
+Hex-data : ED 30 B0 D9 01 03 03 07 46 7B 17 7A 20 35 3E B7 4B F7 A0 5A 06 3F 08 86 2E F6 14 18 44 42 8B 47 7C 7C F0 05 59 40 D2 0C 17 C3 2F 3F 86 E9 C9 81 80 48 D4 BE 82 
+
+*******************NETWORK PACKET*******************
+
+********ETHERNET HEADER********
+
+	|-Source Address : 00-00-00-00-00-00
+	|-Destination Address : 00-00-00-00-00-00
+	|-Protocol : 2048
+
+********IP HEADER********
+
+	|-Version : 4
+	|-Internet Header Length : 5 DWORDS or 20 Bytes
+ 	|-Type Of Service : 0
+ 	|-Total Length : 152 Bytes
+ 	|-Identification : 53889
+ 	|-Time To Live : 64
+ 	|-Protocol : 6
+ 	|-Header Checksum : 26585
+ 	|-Source IP : 127.0.0.1
+ 	|-Destination IP : 127.2.2.2
+ 
+********TCP HEADER********
+
+	|-Source Port      : 48204
+	|-Destination Port : 9999
+	|-Sequence Number    : 3610529962
+	|-Acknowledge Number : 104617936
+	|-Header Length      : 8 DWORDS or 32 BYTES
+		|-Urgent Flag          : 0
+		|-Acknowledgement Flag : 1
+		|-Push Flag            : 1
+		|-Reset Flag           : 0
+		|-Synchronise Flag     : 0
+		|-Finish Flag          : 0
+	|-Window         : 512
+	|-Checksum       : 144
+	|-Urgent Pointer : 0
+	|-Data : 
+Hex-data : 
+
+*******************NETWORK PACKET*******************
+
+********ETHERNET HEADER********
+
+	|-Source Address : 00-00-00-00-00-00
+	|-Destination Address : 00-00-00-00-00-00
+	|-Protocol : 2048
+
+********IP HEADER********
+
+	|-Version : 4
+	|-Internet Header Length : 5 DWORDS or 20 Bytes
+ 	|-Type Of Service : 0
+ 	|-Total Length : 52 Bytes
+ 	|-Identification : 28721
+ 	|-Time To Live : 64
+ 	|-Protocol : 6
+ 	|-Header Checksum : 51853
+ 	|-Source IP : 127.2.2.2
+ 	|-Destination IP : 127.0.0.1
+ 
+********TCP HEADER********
+
+	|-Source Port      : 9999
+	|-Destination Port : 48204
+	|-Sequence Number    : 104617936
+	|-Acknowledge Number : 3610530062
+	|-Header Length      : 8 DWORDS or 32 BYTES
+		|-Urgent Flag          : 0
+		|-Acknowledgement Flag : 1
+		|-Push Flag            : 0
+		|-Reset Flag           : 0
+		|-Synchronise Flag     : 0
+		|-Finish Flag          : 0
+	|-Window         : 511
+	|-Checksum       : 44
+	|-Urgent Pointer : 0
+	|-Data : 
+Hex-data : 
+
+*******************NETWORK PACKET*******************
+
+********ETHERNET HEADER********
+
+	|-Source Address : 00-00-00-00-00-00
+	|-Destination Address : 00-00-00-00-00-00
+	|-Protocol : 2048
+
+********IP HEADER********
+
+	|-Version : 4
+	|-Internet Header Length : 5 DWORDS or 20 Bytes
+ 	|-Type Of Service : 0
+ 	|-Total Length : 152 Bytes
+ 	|-Identification : 28722
+ 	|-Time To Live : 64
+ 	|-Protocol : 6
+ 	|-Header Checksum : 51752
+ 	|-Source IP : 127.2.2.2
+ 	|-Destination IP : 127.0.0.1
+ 
+********TCP HEADER********
+
+	|-Source Port      : 9999
+	|-Destination Port : 48204
+	|-Sequence Number    : 104617936
+	|-Acknowledge Number : 3610530062
+	|-Header Length      : 8 DWORDS or 32 BYTES
+		|-Urgent Flag          : 0
+		|-Acknowledgement Flag : 1
+		|-Push Flag            : 1
+		|-Reset Flag           : 0
+		|-Synchronise Flag     : 0
+		|-Finish Flag          : 0
+	|-Window         : 512
+	|-Checksum       : 144
+	|-Urgent Pointer : 0
+	|-Data : 
+Hex-data : 
+
+*******************NETWORK PACKET*******************
+
+********ETHERNET HEADER********
+
+	|-Source Address : 00-00-00-00-00-00
+	|-Destination Address : 00-00-00-00-00-00
+	|-Protocol : 2048
+
+********IP HEADER********
+
+	|-Version : 4
+	|-Internet Header Length : 5 DWORDS or 20 Bytes
+ 	|-Type Of Service : 0
+ 	|-Total Length : 52 Bytes
+ 	|-Identification : 53890
+ 	|-Time To Live : 64
+ 	|-Protocol : 6
+ 	|-Header Checksum : 26684
+ 	|-Source IP : 127.0.0.1
+ 	|-Destination IP : 127.2.2.2
+ 
+********TCP HEADER********
+
+	|-Source Port      : 48204
+	|-Destination Port : 9999
+	|-Sequence Number    : 3610530062
+	|-Acknowledge Number : 104618036
+	|-Header Length      : 8 DWORDS or 32 BYTES
+		|-Urgent Flag          : 0
+		|-Acknowledgement Flag : 1
+		|-Push Flag            : 0
+		|-Reset Flag           : 0
+		|-Synchronise Flag     : 0
+		|-Finish Flag          : 0
+	|-Window         : 512
+	|-Checksum       : 44
+	|-Urgent Pointer : 0
+	|-Data : 
+Hex-data : 
+
+*******************NETWORK PACKET*******************
+
+********ETHERNET HEADER********
+
+	|-Source Address : 00-00-00-00-00-00
+	|-Destination Address : 00-00-00-00-00-00
+	|-Protocol : 2048
+
+********IP HEADER********
+
+	|-Version : 4
+	|-Internet Header Length : 5 DWORDS or 20 Bytes
+ 	|-Type Of Service : 0
+ 	|-Total Length : 84 Bytes
+ 	|-Identification : 53891
+ 	|-Time To Live : 64
+ 	|-Protocol : 6
+ 	|-Header Checksum : 26651
+ 	|-Source IP : 127.0.0.1
+ 	|-Destination IP : 127.2.2.2
+ 
+********TCP HEADER********
+
+	|-Source Port      : 48204
+	|-Destination Port : 9999
+	|-Sequence Number    : 3610530062
+	|-Acknowledge Number : 104618036
+	|-Header Length      : 8 DWORDS or 32 BYTES
+		|-Urgent Flag          : 0
+		|-Acknowledgement Flag : 1
+		|-Push Flag            : 1
+		|-Reset Flag           : 0
+		|-Synchronise Flag     : 0
+		|-Finish Flag          : 0
+	|-Window         : 512
+	|-Checksum       : 76
+	|-Urgent Pointer : 0
+	|-Data : ‰ZÂ`‰ifcI¶Àá—)t,˜Ù∫3∫ÔUCû’®M||âÍÿJ’Î‚≠®¢’É§f«N∏d°JÍDÄ\™3ÀŒ||2
+Hex-data : E4 17 02 5A E5 11 03 60 E4 69 66 63 49 A6 CB 87 D1 29 74 2C F7 F4 BA 33 BA EF 55 43 9E D5 A8 4D 7C 7C 89 EA D8 4A 13 D5 EB E2 AD A8 17 02 A2 D5 83 A4 66 C7 4E B8 64 A1 4A EA 44 80 5C AA 33 CB CE 14 7C 7C 32 
+
+*******************NETWORK PACKET*******************
+
+********ETHERNET HEADER********
+
+	|-Source Address : 00-00-00-00-00-00
+	|-Destination Address : 00-00-00-00-00-00
+	|-Protocol : 2048
+
+********IP HEADER********
+
+	|-Version : 4
+	|-Internet Header Length : 5 DWORDS or 20 Bytes
+ 	|-Type Of Service : 0
+ 	|-Total Length : 52 Bytes
+ 	|-Identification : 28723
+ 	|-Time To Live : 64
+ 	|-Protocol : 6
+ 	|-Header Checksum : 51851
+ 	|-Source IP : 127.2.2.2
+ 	|-Destination IP : 127.0.0.1
+ 
+********TCP HEADER********
+
+	|-Source Port      : 9999
+	|-Destination Port : 48204
+	|-Sequence Number    : 104618036
+	|-Acknowledge Number : 3610530094
+	|-Header Length      : 8 DWORDS or 32 BYTES
+		|-Urgent Flag          : 0
+		|-Acknowledgement Flag : 1
+		|-Push Flag            : 0
+		|-Reset Flag           : 0
+		|-Synchronise Flag     : 0
+		|-Finish Flag          : 0
+	|-Window         : 512
+	|-Checksum       : 44
+	|-Urgent Pointer : 0
+	|-Data : ‰ZÂ`‰ifcI¶Àá—)t,˜Ù∫3∫ÔUCû’®M||âÍÿJ’Î‚≠®¢’É§f«N∏d°JÍDÄ\™3ÀŒ||2
+Hex-data : E4 17 02 5A E5 11 03 60 E4 69 66 63 49 A6 CB 87 D1 29 74 2C F7 F4 BA 33 BA EF 55 43 9E D5 A8 4D 7C 7C 89 EA D8 4A 13 D5 EB E2 AD A8 17 02 A2 D5 83 A4 66 C7 4E B8 64 A1 4A EA 44 80 5C AA 33 CB CE 14 7C 7C 32 
+
+*******************NETWORK PACKET*******************
+
+********ETHERNET HEADER********
+
+	|-Source Address : 00-00-00-00-00-00
+	|-Destination Address : 00-00-00-00-00-00
+	|-Protocol : 2048
+
+********IP HEADER********
+
+	|-Version : 4
+	|-Internet Header Length : 5 DWORDS or 20 Bytes
+ 	|-Type Of Service : 0
+ 	|-Total Length : 52 Bytes
+ 	|-Identification : 53892
+ 	|-Time To Live : 64
+ 	|-Protocol : 6
+ 	|-Header Checksum : 26682
+ 	|-Source IP : 127.0.0.1
+ 	|-Destination IP : 127.2.2.2
+ 
+********TCP HEADER********
+
+	|-Source Port      : 48204
+	|-Destination Port : 9999
+	|-Sequence Number    : 3610530094
+	|-Acknowledge Number : 104618036
+	|-Header Length      : 8 DWORDS or 32 BYTES
+		|-Urgent Flag          : 0
+		|-Acknowledgement Flag : 1
+		|-Push Flag            : 0
+		|-Reset Flag           : 0
+		|-Synchronise Flag     : 0
+		|-Finish Flag          : 1
+	|-Window         : 512
+	|-Checksum       : 44
+	|-Urgent Pointer : 0
+	|-Data : ‰ZÂ`‰ifcI¶Àá—)t,˜Ù∫3∫ÔUCû’®M||âÍÿJ’Î‚≠®¢’É§f«N∏d°JÍDÄ\™3ÀŒ||2
+Hex-data : E4 17 02 5A E5 11 03 60 E4 69 66 63 49 A6 CB 87 D1 29 74 2C F7 F4 BA 33 BA EF 55 43 9E D5 A8 4D 7C 7C 89 EA D8 4A 13 D5 EB E2 AD A8 17 02 A2 D5 83 A4 66 C7 4E B8 64 A1 4A EA 44 80 5C AA 33 CB CE 14 7C 7C 32 
+
+*******************NETWORK PACKET*******************
+
+********ETHERNET HEADER********
+
+	|-Source Address : 00-00-00-00-00-00
+	|-Destination Address : 00-00-00-00-00-00
+	|-Protocol : 2048
+
+********IP HEADER********
+
+	|-Version : 4
+	|-Internet Header Length : 5 DWORDS or 20 Bytes
+ 	|-Type Of Service : 0
+ 	|-Total Length : 52 Bytes
+ 	|-Identification : 51274
+ 	|-Time To Live : 64
+ 	|-Protocol : 6
+ 	|-Header Checksum : 29811
+ 	|-Source IP : 127.0.0.1
+ 	|-Destination IP : 127.0.0.5
+ 
+********TCP HEADER********
+
+	|-Source Port      : 34344
+	|-Destination Port : 9898
+	|-Sequence Number    : 710863745
+	|-Acknowledge Number : 403347445
+	|-Header Length      : 8 DWORDS or 32 BYTES
+		|-Urgent Flag          : 0
+		|-Acknowledgement Flag : 1
+		|-Push Flag            : 0
+		|-Reset Flag           : 0
+		|-Synchronise Flag     : 0
+		|-Finish Flag          : 1
+	|-Window         : 512
+	|-Checksum       : 65068
+	|-Urgent Pointer : 0
+	|-Data : ‰ZÂ`‰ifcI¶Àá—)t,˜Ù∫3∫ÔUCû’®M||âÍÿJ’Î‚≠®¢’É§f«N∏d°JÍDÄ\™3ÀŒ||2
+Hex-data : E4 17 02 5A E5 11 03 60 E4 69 66 63 49 A6 CB 87 D1 29 74 2C F7 F4 BA 33 BA EF 55 43 9E D5 A8 4D 7C 7C 89 EA D8 4A 13 D5 EB E2 AD A8 17 02 A2 D5 83 A4 66 C7 4E B8 64 A1 4A EA 44 80 5C AA 33 CB CE 14 7C 7C 32 
+
+*******************NETWORK PACKET*******************
+
+********ETHERNET HEADER********
+
+	|-Source Address : 00-00-00-00-00-00
+	|-Destination Address : 00-00-00-00-00-00
+	|-Protocol : 2048
+
+********IP HEADER********
+
+	|-Version : 4
+	|-Internet Header Length : 5 DWORDS or 20 Bytes
+ 	|-Type Of Service : 0
+ 	|-Total Length : 52 Bytes
+ 	|-Identification : 28724
+ 	|-Time To Live : 64
+ 	|-Protocol : 6
+ 	|-Header Checksum : 51850
+ 	|-Source IP : 127.2.2.2
+ 	|-Destination IP : 127.0.0.1
+ 
+********TCP HEADER********
+
+	|-Source Port      : 9999
+	|-Destination Port : 48204
+	|-Sequence Number    : 104618036
+	|-Acknowledge Number : 3610530095
+	|-Header Length      : 8 DWORDS or 32 BYTES
+		|-Urgent Flag          : 0
+		|-Acknowledgement Flag : 1
+		|-Push Flag            : 0
+		|-Reset Flag           : 0
+		|-Synchronise Flag     : 0
+		|-Finish Flag          : 1
+	|-Window         : 512
+	|-Checksum       : 44
+	|-Urgent Pointer : 0
+	|-Data : ‰ZÂ`‰ifcI¶Àá—)t,˜Ù∫3∫ÔUCû’®M||âÍÿJ’Î‚≠®¢’É§f«N∏d°JÍDÄ\™3ÀŒ||2
+Hex-data : E4 17 02 5A E5 11 03 60 E4 69 66 63 49 A6 CB 87 D1 29 74 2C F7 F4 BA 33 BA EF 55 43 9E D5 A8 4D 7C 7C 89 EA D8 4A 13 D5 EB E2 AD A8 17 02 A2 D5 83 A4 66 C7 4E B8 64 A1 4A EA 44 80 5C AA 33 CB CE 14 7C 7C 32 
+
+*******************NETWORK PACKET*******************
+
+********ETHERNET HEADER********
+
+	|-Source Address : 00-00-00-00-00-00
+	|-Destination Address : 00-00-00-00-00-00
+	|-Protocol : 2048
+
+********IP HEADER********
+
+	|-Version : 4
+	|-Internet Header Length : 5 DWORDS or 20 Bytes
+ 	|-Type Of Service : 0
+ 	|-Total Length : 52 Bytes
+ 	|-Identification : 53893
+ 	|-Time To Live : 64
+ 	|-Protocol : 6
+ 	|-Header Checksum : 26681
+ 	|-Source IP : 127.0.0.1
+ 	|-Destination IP : 127.2.2.2
+ 
+********TCP HEADER********
+
+	|-Source Port      : 48204
+	|-Destination Port : 9999
+	|-Sequence Number    : 3610530095
+	|-Acknowledge Number : 104618037
+	|-Header Length      : 8 DWORDS or 32 BYTES
+		|-Urgent Flag          : 0
+		|-Acknowledgement Flag : 1
+		|-Push Flag            : 0
+		|-Reset Flag           : 0
+		|-Synchronise Flag     : 0
+		|-Finish Flag          : 0
+	|-Window         : 512
+	|-Checksum       : 44
+	|-Urgent Pointer : 0
+	|-Data : ‰ZÂ`‰ifcI¶Àá—)t,˜Ù∫3∫ÔUCû’®M||âÍÿJ’Î‚≠®¢’É§f«N∏d°JÍDÄ\™3ÀŒ||2
+Hex-data : E4 17 02 5A E5 11 03 60 E4 69 66 63 49 A6 CB 87 D1 29 74 2C F7 F4 BA 33 BA EF 55 43 9E D5 A8 4D 7C 7C 89 EA D8 4A 13 D5 EB E2 AD A8 17 02 A2 D5 83 A4 66 C7 4E B8 64 A1 4A EA 44 80 5C AA 33 CB CE 14 7C 7C 32 
+
+*******************NETWORK PACKET*******************
+
+********ETHERNET HEADER********
+
+	|-Source Address : 00-00-00-00-00-00
+	|-Destination Address : 00-00-00-00-00-00
+	|-Protocol : 2048
+
+********IP HEADER********
+
+	|-Version : 4
+	|-Internet Header Length : 5 DWORDS or 20 Bytes
+ 	|-Type Of Service : 0
+ 	|-Total Length : 52 Bytes
+ 	|-Identification : 49751
+ 	|-Time To Live : 64
+ 	|-Protocol : 6
+ 	|-Header Checksum : 30823
+ 	|-Source IP : 127.2.2.2
+ 	|-Destination IP : 127.0.0.1
+ 
+********TCP HEADER********
+
+	|-Source Port      : 9999
+	|-Destination Port : 48196
+	|-Sequence Number    : 1969452675
+	|-Acknowledge Number : 1733028107
+	|-Header Length      : 8 DWORDS or 32 BYTES
+		|-Urgent Flag          : 0
+		|-Acknowledgement Flag : 1
+		|-Push Flag            : 0
+		|-Reset Flag           : 0
+		|-Synchronise Flag     : 0
+		|-Finish Flag          : 1
+	|-Window         : 512
+	|-Checksum       : 44
+	|-Urgent Pointer : 0
+	|-Data : ‰ZÂ`‰ifcI¶Àá—)t,˜Ù∫3∫ÔUCû’®M||âÍÿJ’Î‚≠®¢’É§f«N∏d°JÍDÄ\™3ÀŒ||2
+Hex-data : E4 17 02 5A E5 11 03 60 E4 69 66 63 49 A6 CB 87 D1 29 74 2C F7 F4 BA 33 BA EF 55 43 9E D5 A8 4D 7C 7C 89 EA D8 4A 13 D5 EB E2 AD A8 17 02 A2 D5 83 A4 66 C7 4E B8 64 A1 4A EA 44 80 5C AA 33 CB CE 14 7C 7C 32 
+
+*******************NETWORK PACKET*******************
+
+********ETHERNET HEADER********
+
+	|-Source Address : 00-00-00-00-00-00
+	|-Destination Address : 00-00-00-00-00-00
+	|-Protocol : 2048
+
+********IP HEADER********
+
+	|-Version : 4
+	|-Internet Header Length : 5 DWORDS or 20 Bytes
+ 	|-Type Of Service : 0
+ 	|-Total Length : 52 Bytes
+ 	|-Identification : 20329
+ 	|-Time To Live : 64
+ 	|-Protocol : 6
+ 	|-Header Checksum : 60245
+ 	|-Source IP : 127.0.0.1
+ 	|-Destination IP : 127.2.2.2
+ 
+********TCP HEADER********
+
+	|-Source Port      : 48196
+	|-Destination Port : 9999
+	|-Sequence Number    : 1733028107
+	|-Acknowledge Number : 1969452676
+	|-Header Length      : 8 DWORDS or 32 BYTES
+		|-Urgent Flag          : 0
+		|-Acknowledgement Flag : 1
+		|-Push Flag            : 0
+		|-Reset Flag           : 0
+		|-Synchronise Flag     : 0
+		|-Finish Flag          : 0
+	|-Window         : 512
+	|-Checksum       : 44
+	|-Urgent Pointer : 0
+	|-Data : ‰ZÂ`‰ifcI¶Àá—)t,˜Ù∫3∫ÔUCû’®M||âÍÿJ’Î‚≠®¢’É§f«N∏d°JÍDÄ\™3ÀŒ||2
+Hex-data : E4 17 02 5A E5 11 03 60 E4 69 66 63 49 A6 CB 87 D1 29 74 2C F7 F4 BA 33 BA EF 55 43 9E D5 A8 4D 7C 7C 89 EA D8 4A 13 D5 EB E2 AD A8 17 02 A2 D5 83 A4 66 C7 4E B8 64 A1 4A EA 44 80 5C AA 33 CB CE 14 7C 7C 32 
+
+*******************NETWORK PACKET*******************
+
+********ETHERNET HEADER********
+
+	|-Source Address : 00-00-00-00-00-00
+	|-Destination Address : 00-00-00-00-00-00
+	|-Protocol : 2048
+
+********IP HEADER********
+
+	|-Version : 4
+	|-Internet Header Length : 5 DWORDS or 20 Bytes
+ 	|-Type Of Service : 0
+ 	|-Total Length : 52 Bytes
+ 	|-Identification : 21104
+ 	|-Time To Live : 64
+ 	|-Protocol : 6
+ 	|-Header Checksum : 59981
+ 	|-Source IP : 127.0.0.5
+ 	|-Destination IP : 127.0.0.1
+ 
+********TCP HEADER********
+
+	|-Source Port      : 9898
+	|-Destination Port : 34344
+	|-Sequence Number    : 403347445
+	|-Acknowledge Number : 710863746
+	|-Header Length      : 8 DWORDS or 32 BYTES
+		|-Urgent Flag          : 0
+		|-Acknowledgement Flag : 1
+		|-Push Flag            : 0
+		|-Reset Flag           : 0
+		|-Synchronise Flag     : 0
+		|-Finish Flag          : 0
+	|-Window         : 512
+	|-Checksum       : 65068
+	|-Urgent Pointer : 0
+	|-Data : ‰ZÂ`‰ifcI¶Àá—)t,˜Ù∫3∫ÔUCû’®M||âÍÿJ’Î‚≠®¢’É§f«N∏d°JÍDÄ\™3ÀŒ||2
+Hex-data : E4 17 02 5A E5 11 03 60 E4 69 66 63 49 A6 CB 87 D1 29 74 2C F7 F4 BA 33 BA EF 55 43 9E D5 A8 4D 7C 7C 89 EA D8 4A 13 D5 EB E2 AD A8 17 02 A2 D5 83 A4 66 C7 4E B8 64 A1 4A EA 44 80 5C AA 33 CB CE 14 7C 7C 32 
+
+*******************NETWORK PACKET*******************
+
+********ETHERNET HEADER********
+
+	|-Source Address : 00-00-00-00-00-00
+	|-Destination Address : 00-00-00-00-00-00
+	|-Protocol : 2048
+
+********IP HEADER********
+
+	|-Version : 4
+	|-Internet Header Length : 5 DWORDS or 20 Bytes
+ 	|-Type Of Service : 0
+ 	|-Total Length : 52 Bytes
+ 	|-Identification : 20330
+ 	|-Time To Live : 64
+ 	|-Protocol : 6
+ 	|-Header Checksum : 60244
+ 	|-Source IP : 127.0.0.1
+ 	|-Destination IP : 127.2.2.2
+ 
+********TCP HEADER********
+
+	|-Source Port      : 48196
+	|-Destination Port : 9999
+	|-Sequence Number    : 1733028107
+	|-Acknowledge Number : 1969452676
+	|-Header Length      : 8 DWORDS or 32 BYTES
+		|-Urgent Flag          : 0
+		|-Acknowledgement Flag : 1
+		|-Push Flag            : 0
+		|-Reset Flag           : 0
+		|-Synchronise Flag     : 0
+		|-Finish Flag          : 1
+	|-Window         : 512
+	|-Checksum       : 44
+	|-Urgent Pointer : 0
+	|-Data : ‰ZÂ`‰ifcI¶Àá—)t,˜Ù∫3∫ÔUCû’®M||âÍÿJ’Î‚≠®¢’É§f«N∏d°JÍDÄ\™3ÀŒ||2
+Hex-data : E4 17 02 5A E5 11 03 60 E4 69 66 63 49 A6 CB 87 D1 29 74 2C F7 F4 BA 33 BA EF 55 43 9E D5 A8 4D 7C 7C 89 EA D8 4A 13 D5 EB E2 AD A8 17 02 A2 D5 83 A4 66 C7 4E B8 64 A1 4A EA 44 80 5C AA 33 CB CE 14 7C 7C 32 
+
+*******************NETWORK PACKET*******************
+
+********ETHERNET HEADER********
+
+	|-Source Address : 00-00-00-00-00-00
+	|-Destination Address : 00-00-00-00-00-00
+	|-Protocol : 2048
+
+********IP HEADER********
+
+	|-Version : 4
+	|-Internet Header Length : 5 DWORDS or 20 Bytes
+ 	|-Type Of Service : 0
+ 	|-Total Length : 52 Bytes
+ 	|-Identification : 0
+ 	|-Time To Live : 64
+ 	|-Protocol : 6
+ 	|-Header Checksum : 15039
+ 	|-Source IP : 127.2.2.2
+ 	|-Destination IP : 127.0.0.1
+ 
+********TCP HEADER********
+
+	|-Source Port      : 9999
+	|-Destination Port : 48196
+	|-Sequence Number    : 1969452676
+	|-Acknowledge Number : 1733028108
+	|-Header Length      : 8 DWORDS or 32 BYTES
+		|-Urgent Flag          : 0
+		|-Acknowledgement Flag : 1
+		|-Push Flag            : 0
+		|-Reset Flag           : 0
+		|-Synchronise Flag     : 0
+		|-Finish Flag          : 0
+	|-Window         : 512
+	|-Checksum       : 29045
+	|-Urgent Pointer : 0
+	|-Data : ‰ZÂ`‰ifcI¶Àá—)t,˜Ù∫3∫ÔUCû’®M||âÍÿJ’Î‚≠®¢’É§f«N∏d°JÍDÄ\™3ÀŒ||2
+Hex-data : E4 17 02 5A E5 11 03 60 E4 69 66 63 49 A6 CB 87 D1 29 74 2C F7 F4 BA 33 BA EF 55 43 9E D5 A8 4D 7C 7C 89 EA D8 4A 13 D5 EB E2 AD A8 17 02 A2 D5 83 A4 66 C7 4E B8 64 A1 4A EA 44 80 5C AA 33 CB CE 14 7C 7C 32 
+
+*******************NETWORK PACKET*******************
+
+********ETHERNET HEADER********
+
+	|-Source Address : 00-00-00-00-00-00
+	|-Destination Address : 00-00-00-00-00-00
+	|-Protocol : 2048
+
+********IP HEADER********
+
+	|-Version : 4
+	|-Internet Header Length : 5 DWORDS or 20 Bytes
+ 	|-Type Of Service : 0
+ 	|-Total Length : 52 Bytes
+ 	|-Identification : 21105
+ 	|-Time To Live : 64
+ 	|-Protocol : 6
+ 	|-Header Checksum : 59980
+ 	|-Source IP : 127.0.0.5
+ 	|-Destination IP : 127.0.0.1
+ 
+********TCP HEADER********
+
+	|-Source Port      : 9898
+	|-Destination Port : 34344
+	|-Sequence Number    : 403347445
+	|-Acknowledge Number : 710863746
+	|-Header Length      : 8 DWORDS or 32 BYTES
+		|-Urgent Flag          : 0
+		|-Acknowledgement Flag : 1
+		|-Push Flag            : 0
+		|-Reset Flag           : 0
+		|-Synchronise Flag     : 0
+		|-Finish Flag          : 1
+	|-Window         : 512
+	|-Checksum       : 65068
+	|-Urgent Pointer : 0
+	|-Data : ‰ZÂ`‰ifcI¶Àá—)t,˜Ù∫3∫ÔUCû’®M||âÍÿJ’Î‚≠®¢’É§f«N∏d°JÍDÄ\™3ÀŒ||2
+Hex-data : E4 17 02 5A E5 11 03 60 E4 69 66 63 49 A6 CB 87 D1 29 74 2C F7 F4 BA 33 BA EF 55 43 9E D5 A8 4D 7C 7C 89 EA D8 4A 13 D5 EB E2 AD A8 17 02 A2 D5 83 A4 66 C7 4E B8 64 A1 4A EA 44 80 5C AA 33 CB CE 14 7C 7C 32 
+
+*******************NETWORK PACKET*******************
+
+********ETHERNET HEADER********
+
+	|-Source Address : 00-00-00-00-00-00
+	|-Destination Address : 00-00-00-00-00-00
+	|-Protocol : 2048
+
+********IP HEADER********
+
+	|-Version : 4
+	|-Internet Header Length : 5 DWORDS or 20 Bytes
+ 	|-Type Of Service : 0
+ 	|-Total Length : 52 Bytes
+ 	|-Identification : 0
+ 	|-Time To Live : 64
+ 	|-Protocol : 6
+ 	|-Header Checksum : 15550
+ 	|-Source IP : 127.0.0.1
+ 	|-Destination IP : 127.0.0.5
+ 

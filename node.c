@@ -24,10 +24,36 @@ char my_id[MAX_ID_LENGTH + 1];//IDs are in char type and also store \0 at the en
 int port;
 
 void print(unsigned char buff[],int len){
+	
 	for(int i=0;i<len;i++){
 		printf("%02X ",buff[i]);
 	}
 	printf("\n");
+}
+
+void IPLookUp(char* id,char* ipaddr){
+	FILE* file = fopen("IPs.txt", "r");
+
+    	if (file == NULL) {
+        	perror("Error opening file");
+        	return;
+    	}
+
+    	char temp_id[MAX_ID_LENGTH + 1];
+    	char temp_ip[16];
+	char line[100];
+
+    	while (fgets(line, sizeof(line), file) != NULL) {
+        	if (sscanf(line, "%32s %15[^\n]", temp_id, temp_ip) == 2) {
+        	    if (strcmp(temp_id, id) == 0) {
+        	        strcpy(ipaddr, temp_ip);
+        	        fclose(file);
+        	        return;
+        	    }
+        	}
+    	}
+
+    	fclose(file);
 }
 
 // Function to compute SHA-256 hash
@@ -65,8 +91,9 @@ void copyTo(unsigned char* dest,unsigned char* source,int bytes){
 void extract_nonce(unsigned char nonce_xor_password[],unsigned char nonce[]){
 	int bytes_read,bytes_sent;
 	
-	printf("Nonce XOR Password : ");
+	printf("Nonce XOR Password rcvd from server : ");
 	print(nonce_xor_password,NONCE_LENGTH);
+	printf("\n");
 	    	
     	//extracting nonce
     	printf("Enter your password to continue : ");
@@ -79,8 +106,9 @@ void extract_nonce(unsigned char nonce_xor_password[],unsigned char nonce[]){
     		return;
     	}
     	password[bytes_read - 1] = '\0';
-    	printf("Your Password is : ");
-    	print((unsigned char*)password,strlen(password));
+    	printf("\n");
+    	//printf("Your Password is : ");
+    	//print((unsigned char*)password,strlen(password));
     	
     	int p_index = strlen(password) - 1;
     	
@@ -98,9 +126,18 @@ void extract_nonce(unsigned char nonce_xor_password[],unsigned char nonce[]){
     	
 }
 
+void D_puKey(unsigned char *Y) {
+	for(int i = 0; i < MAX_PU_KEY_LENGTH; i++) {
+	        Y[i] = 0; 
+	        for (int j = 0; j < 8; j++) {
+	            Y[i] |= (rand() & 1) << j; 
+	        }
+	}
+}
+
 void* node_as_A(void* args){
 
-	printf("Executing as Node - A\n");
+	printf("Executing as Node - A\n\n");
 	
 	int bytes_read,bytes_sent;
 
@@ -125,7 +162,7 @@ void* node_as_A(void* args){
 	if(st<0){
 		perror("connect ");
 	}else{
-		printf("Connection established with server\n");
+		printf("Connection established with server\n\n");
 		
 		printf("Enter ID of Node - B : ");
 		fflush(stdout);
@@ -135,24 +172,22 @@ void* node_as_A(void* args){
 			perror("read");
 		}else{
 			id_b[bytes_read -1] = '\0';
-			printf("Node-B ID %s ...\n",id_b);
+			//printf("Node-B ID %s ...\n",id_b);
 		}
 	
-		//Asking for node-B ipaddr
-		printf("Enter Node-B IP address : ");
-		fflush(stdout);
-		bytes_read = read(0,ipaddr_b,sizeof ipaddr_b);
-		ipaddr_b[bytes_read - 1] = '\0';
+		//find node-B ipaddr
+		IPLookUp(id_b,ipaddr_b);
+		//printf("Node-B IP..%s\n\n",ipaddr_b);
 	
 		//send ids
 		char ids__ip[2*MAX_ID_LENGTH + 20];
 		sprintf(ids__ip,"%s||%s||%s",my_id,id_b,ipaddr_b);
-		printf("Sending IDs,IP : %s\n",ids__ip);
+		//printf("Sending IDs,IP : %s\n",ids__ip);
 		bytes_sent = send(sfd,ids__ip,strlen(ids__ip),0);
 		if(bytes_sent != strlen(ids__ip)){
 			perror("send");
 		}else{
-			printf("Sent IDs to the server\n");
+			printf("Sent IDs to the server\n\n");
 		}
 		
 		unsigned char nonce[NONCE_LENGTH];		
@@ -178,6 +213,7 @@ void* node_as_A(void* args){
 		unsigned char Ya__hash_Ya__nonce__ida[MAX_PU_KEY_LENGTH + 2 + HASH_LENGTH + 2 + MAX_ID_LENGTH];
 		
 		//computing YA to be done later
+		D_puKey(Ya);
 		
 		//fill Ya||Nonce
 		copyTo(Ya__nonce,Ya,MAX_PU_KEY_LENGTH);
@@ -185,13 +221,13 @@ void* node_as_A(void* args){
 		copyTo(Ya__nonce + MAX_PU_KEY_LENGTH + 2,nonce,NONCE_LENGTH);
 		
 		//printing Ya||Nonce content
-		printf("YA||Nonce : ");
-		print(Ya__nonce,sizeof Ya__nonce);
+		//printf("YA||Nonce : ");
+		//print(Ya__nonce,sizeof Ya__nonce);
 		
 		//find H(YA||Nonce)
 		computeSHA256(Ya__nonce,sizeof Ya__nonce,hash_Ya__nonce);
-		printf("YA||Nonce ");
-		printHash(hash_Ya__nonce);
+		//printf("YA||Nonce ");
+		//printHash(hash_Ya__nonce);
 		
 		//fill YA||H(Ya||NOnce)||IDA
 		copyTo(Ya__hash_Ya__nonce__ida,Ya,MAX_PU_KEY_LENGTH);
@@ -199,10 +235,6 @@ void* node_as_A(void* args){
 		copyTo(Ya__hash_Ya__nonce__ida + MAX_PU_KEY_LENGTH + 2,hash_Ya__nonce,HASH_LENGTH);
 		Ya__hash_Ya__nonce__ida[MAX_PU_KEY_LENGTH + 2 + HASH_LENGTH] = Ya__hash_Ya__nonce__ida[MAX_PU_KEY_LENGTH + 2 + HASH_LENGTH + 1] = '|';
 		copyTo(Ya__hash_Ya__nonce__ida + MAX_PU_KEY_LENGTH + 2 + HASH_LENGTH + 2, (unsigned char*)my_id , strlen(my_id));
-		
-		//print the buffer we are sending - Ya__hash_Ya__nonce__ida
-		printf("YA||(H(YA||Nonce)||IDA) : ");
-		print(Ya__hash_Ya__nonce__ida,sizeof Ya__hash_Ya__nonce__ida);
 		
 		//Connect to Node - B
 		int bsfd = socket(AF_INET,SOCK_STREAM,0);
@@ -221,7 +253,13 @@ void* node_as_A(void* args){
 			perror("connect ");
 			return NULL;
 		}
-		printf("Connection with Node-B successful\n");
+		printf("\nConnection with Node-B successful\n");
+		
+		//print the buffer we are sending - Ya__hash_Ya__nonce__ida
+		printf("\nSending YA||(H(YA||Nonce)||IDA) to Node-B :\n");
+		print(Ya__hash_Ya__nonce__ida,sizeof Ya__hash_Ya__nonce__ida);
+		printf("\n");
+		
 		bytes_sent = send(bsfd,Ya__hash_Ya__nonce__ida,sizeof Ya__hash_Ya__nonce__ida,0);
 		if(bytes_sent != sizeof Ya__hash_Ya__nonce__ida){
 			perror("send ");
@@ -235,7 +273,7 @@ void* node_as_A(void* args){
 		
 		bytes_read = recv(bsfd,rcvd_Yb__hash_Yb__f_nonce__idb,sizeof rcvd_Yb__hash_Yb__f_nonce__idb,0);
 		
-		printf("Rcvd YB||H(YB||f(Nonce))||IDB : ");
+		printf("Rcvd YB||H(YB||f(Nonce))||IDB from Node-B : \n");
 		print(rcvd_Yb__hash_Yb__f_nonce__idb,sizeof rcvd_Yb__hash_Yb__f_nonce__idb);
 		
 		//find YB||f(Nonce) from rcvd YB and Nonce from Server
@@ -247,12 +285,12 @@ void* node_as_A(void* args){
 		
 		//find H(YB||f(Nonce))
 		computeSHA256(comp_Yb__f_nonce,sizeof comp_Yb__f_nonce,comp_hash_Yb__f_nonce);
-		printf("Computed YB||f(Nonce) : ");
+		printf("\nComputed YB||f(Nonce) ");
 		printHash(comp_hash_Yb__f_nonce);
 		
 		int is_hash_Yb__f_nonce_matched = checkIfHashMatch(comp_hash_Yb__f_nonce,rcvd_Yb__hash_Yb__f_nonce__idb + MAX_PU_KEY_LENGTH + 2);
 		if(is_hash_Yb__f_nonce_matched){
-			printf("Rcvd and computed H(YB||f(Nonce)) MATCHED!!\n");
+			printf("\nRcvd and computed H(YB||f(Nonce)) MATCHED!!\n\n");
 		}else{
 			printf("MISMATCH IN HASHES!!TERMINATED..\n");
 			return NULL;
@@ -271,7 +309,8 @@ void* node_as_A(void* args){
 			perror("send ");
 			return NULL;
 		}
-		printf("Sent H(Nonce) to Node-B successfully...\n\n");
+		printf("Sent H(Nonce) to Node-B successfully...\n");
+		printf("\nKey Exchange Successful....\nTerminating the session..\n");
 		
 		close(bsfd);
 		close(sfd);
@@ -280,7 +319,7 @@ void* node_as_A(void* args){
 
 void* node_as_B(void* args){
 	
-	printf("Executing as Node - B\n");
+	printf("Executing as Node - B\n\n");
 
 	int bytes_read,bytes_sent;
 
@@ -308,7 +347,7 @@ void* node_as_B(void* args){
 	//accept req from server
 	int nsfd = accept(sfd,NULL,NULL);
 	if(nsfd != -1){
-		printf("Server established connection!\n");
+		printf("Server established connection!\n\n");
 		
 		unsigned char nonce_xor_p__hash_nonce_xor_p__ida[NONCE_LENGTH + 2 + HASH_LENGTH];//rcvd
 		unsigned char nonce_xor_password[NONCE_LENGTH];//rcvd
@@ -330,13 +369,13 @@ void* node_as_B(void* args){
 		//extract H(Nonce XOR PB || IDA)
 		copyTo(rcvd_hash_nonce_xor_p__ida,nonce_xor_p__hash_nonce_xor_p__ida + NONCE_LENGTH + 2, HASH_LENGTH);
 		
-		printf("Rcvd(from Server) (Nonce XOR password)||IDA ");
+		printf("\nRcvd(from Server) (Nonce XOR password)||IDA ");
 		printHash(rcvd_hash_nonce_xor_p__ida);
 		
 		//accept connection request from Node - A
 		int nsfd_a = accept(sfd,NULL,NULL);
 		if(nsfd_a != -1){
-			printf("Accepted Node - A's connection request!\n");
+			printf("\nAccepted Node - A's connection request!\n\n");
 			
 			unsigned char rcvd_Ya__hash_Ya__nonce__ida[MAX_PU_KEY_LENGTH + 2 + HASH_LENGTH + 2 + MAX_ID_LENGTH];
 			unsigned char rcvd_Ya[MAX_PU_KEY_LENGTH];
@@ -351,26 +390,27 @@ void* node_as_B(void* args){
 				return NULL;
 			}
 			
-			printf("Rcvd YA||(H(YA||nonce))||IDA : ");
+			printf("Rcvd YA||(H(YA||nonce))||IDA from Node-A : \n");
 			print(rcvd_Ya__hash_Ya__nonce__ida,sizeof rcvd_Ya__hash_Ya__nonce__ida);
+			printf("\n");
 			
 			//Extract YA
 			copyTo(rcvd_Ya,rcvd_Ya__hash_Ya__nonce__ida,MAX_PU_KEY_LENGTH);
 			//print rcvd YA
-			printf("Rcvd YA : ");
-			print(rcvd_Ya,sizeof rcvd_Ya);
+			//printf("Rcvd YA : ");
+			//print(rcvd_Ya,sizeof rcvd_Ya);
 			
 			//Extract H(YA||nonce)
 			copyTo(rcvd_hash_Ya__nonce,rcvd_Ya__hash_Ya__nonce__ida + MAX_PU_KEY_LENGTH + 2,HASH_LENGTH);
 			//printing hash of YA||nonce
-			printf("Rcvd YA||Nonce ");
-			printHash(rcvd_hash_Ya__nonce);
+			//printf("Rcvd YA||Nonce ");
+			//printHash(rcvd_hash_Ya__nonce);
 			
 			//Extract IDA
 			copyTo(rcvd_ida,rcvd_Ya__hash_Ya__nonce__ida + MAX_PU_KEY_LENGTH + 2 + HASH_LENGTH + 2,MAX_ID_LENGTH);
 			//print rcvd IDA (from A)
-			printf("Rcvd IDA from A : ");
-			print(rcvd_ida,sizeof rcvd_ida);
+			//printf("Rcvd IDA from A : ");
+			//print(rcvd_ida,sizeof rcvd_ida);
 			
 			
 			//Find YA||Nonce
@@ -404,7 +444,7 @@ void* node_as_B(void* args){
 			
 			//find H(Nonce XOR P || IDA)
 			computeSHA256(comp_nonce_xor_p__ida,sizeof comp_nonce_xor_p__ida,comp_hash_nonce_xor_p__ida);
-			printf("Computed Nonce XOR Password || IDA ");
+			printf("\nComputed Nonce XOR Password || IDA ");
 			printHash(comp_hash_nonce_xor_p__ida);
 			
 			int hash_nonce_xor_p__ida_matched = checkIfHashMatch(comp_hash_nonce_xor_p__ida,rcvd_hash_nonce_xor_p__ida);
@@ -421,10 +461,11 @@ void* node_as_B(void* args){
 			unsigned char hash_Yb__f_nonce[HASH_LENGTH];
 			unsigned char Yb__hash_Yb__f_nonce__idb[MAX_PU_KEY_LENGTH + 2 + HASH_LENGTH + 2 + MAX_ID_LENGTH];
 			// Compute YB,later
+			D_puKey(Yb);
 			
 			//print YB
-			printf("YB : ");
-			print(Yb,sizeof Yb);
+			//printf("YB : ");
+			//print(Yb,sizeof Yb);
 			
 			//compute YB||f(Nonce)
 			copyTo(Yb__f_nonce,Yb,MAX_PU_KEY_LENGTH);
@@ -435,13 +476,13 @@ void* node_as_B(void* args){
 			}
 			
 			//print YB||f(nonce)
-			printf("YB || f(Nonce) : ");
-			print(Yb__f_nonce,sizeof Yb__f_nonce);
+			//printf("YB || f(Nonce) : ");
+			//print(Yb__f_nonce,sizeof Yb__f_nonce);
 			
 			//find H(YB||f(Nonce))
 			computeSHA256(Yb__f_nonce,sizeof Yb__f_nonce,hash_Yb__f_nonce);
-			printf("YB || f(Nonce) ");
-			printHash(hash_Yb__f_nonce);
+			//printf("YB || f(Nonce) ");
+			//printHash(hash_Yb__f_nonce);
 			
 			//compute YB||H(YB||f(Nonce))||IDB
 			copyTo(Yb__hash_Yb__f_nonce__idb,Yb,MAX_PU_KEY_LENGTH);
@@ -450,7 +491,7 @@ void* node_as_B(void* args){
 			Yb__hash_Yb__f_nonce__idb[MAX_PU_KEY_LENGTH + 2 + HASH_LENGTH] = Yb__hash_Yb__f_nonce__idb[MAX_PU_KEY_LENGTH + 2 + HASH_LENGTH + 1] = '|';
 			copyTo(Yb__hash_Yb__f_nonce__idb + MAX_PU_KEY_LENGTH + 2 + HASH_LENGTH + 2,(unsigned char*)my_id,strlen(my_id));
 			
-			printf("Computed YB||H(YB||f(Nonce))||IDB :");
+			printf("\nSending YB||H(YB||f(Nonce))||IDB to Node-A : \n");
 			print(Yb__hash_Yb__f_nonce__idb,sizeof Yb__hash_Yb__f_nonce__idb);
 			
 			//send YB||H(YB||f(Nonce))||IDB to A
@@ -473,7 +514,7 @@ void* node_as_B(void* args){
 			computeSHA256(nonce,sizeof nonce,comp_hash_nonce);
 			
 			if(checkIfHashMatch(rcvd_hash_nonce,comp_hash_nonce)){
-				printf("Key Exchange Successful....\nTerminating the session..\n");
+				printf("\nKey Exchange Successful....\nTerminating the session..\n");
 			}else{
 				printf("Unsuccessful Key Exchange..\nRestart the process..\nSession Terminated\n\n");
 			}
@@ -497,15 +538,14 @@ int main(){
 		perror("read");
 	}else{
 		my_id[bytes_read -1] = '\0';
-		printf("Your ID is : %s\n",my_id);
+		//printf("Your ID is : %s\n",my_id);
 	}
 	
-	printf("Enter Your IP address : ");
-	fflush(stdout);
-	bytes_read = read(0,ipaddr,sizeof ipaddr);
-	ipaddr[bytes_read - 1] = '\0';
+	//perform ip-lookup
+	IPLookUp(my_id,ipaddr);
+	//printf("Your IP..%s\n\n",ipaddr);
 		
-	printf("Enter Y if you want to start key exchange !\n");
+	printf("Enter Y if you want to start key exchange ! [Y \\ n] ");
 	pthread_t A,B;
 	char c = getchar();
 	getchar();
