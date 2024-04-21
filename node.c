@@ -451,6 +451,7 @@ void* node_as_B(void* args){
 			
 			if(!hash_nonce_xor_p__ida_matched){
 				printf("HASH MISMATCH!!\nTERMINATED\n");
+				return NULL;
 			}
 			printf("Hashes of Nonce XOR Password || IDA MATCHED..\n");
 			
